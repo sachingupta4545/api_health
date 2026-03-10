@@ -1,38 +1,33 @@
-import express from 'express';
+import express from "express";
+import cors from "cors";
+import { connectDB } from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
-
 const PORT = process.env.PORT || 3000;
 
-// app.use((req, res, next) => {
-//     console.log("Hello sachin");
+// ─── Middlewares ───────────────────────────────────
+app.use(cors());
+app.use(express.json());
 
-//     res.on('finish', () => {
-//         console.log('Response finished');
-//     })
-//     next();
-// })
+// ─── Connect to Database ────────────────────────────
+await connectDB();
 
-app.get('/', (req, res) => {
-    res.send('Hello Sachin Gupta!');
+// ─── Routes ────────────────────────────────────────
+app.use("/api/auth", authRoutes);
+
+// ─── Health Check ───────────────────────────────────
+app.get("/", (req, res) => {
+    res.json({ status: "OK", message: "API Health Check Server is running" });
 });
 
-app.get('/health', (req, res) => {
-    throw new Error("Something went wrong");
-    // res.send('This is health route');
-});
-
-app.get('/about', (req, res) => {
-    res.send('Hey sachin , this is about route');
-});
-
-
+// ─── Global Error Handler ────────────────────────────
 app.use((err, req, res, next) => {
-    console.error("Error happends", err);
-    res.send("internal server error", 500);
-})
+    console.error("Unhandled Error:", err.message);
+    res.status(500).json({ message: "Internal server error" });
+});
 
-
+// ─── Start Server ────────────────────────────────────
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`✅ Server is running on http://localhost:${PORT}`);
 });
