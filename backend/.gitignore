@@ -25,6 +25,7 @@ build/Release
 
 # Environment variables
 .env
+.env.example
 .env.test
 .env.production
 
