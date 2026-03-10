@@ -8,10 +8,7 @@ export const register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        if (!name || !email || !password) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
-
+        // Validation is already done by middleware — jump straight to business logic
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ message: "Email is already registered" });
@@ -32,7 +29,11 @@ export const register = async (req, res) => {
         });
     } catch (error) {
         console.error("Register Error:", error.message);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({
+            message: process.env.NODE_ENV === "production"
+                ? "Internal server error"
+                : error.message
+        });
     }
 };
 

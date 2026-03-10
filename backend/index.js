@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
@@ -24,7 +25,7 @@ app.get("/", (req, res) => {
 // ─── Global Error Handler ────────────────────────────
 app.use((err, req, res, next) => {
     console.error("Unhandled Error:", err.message);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: err.message });
 });
 
 // ─── Start Server ────────────────────────────────────
