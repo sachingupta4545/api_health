@@ -25,10 +25,9 @@ const userSchema = new mongoose.Schema(
 );
 
 // Automatically hash password before saving
-userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+userSchema.pre("save", async function () {
+    if (!this.isModified("password")) return;  // Mongoose 7+: async hooks don't receive next()
     this.password = await bcrypt.hash(this.password, 12);
-    next();
 });
 
 // Instance method to compare passwords during login

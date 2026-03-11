@@ -5,9 +5,9 @@ import { registerRules, loginRules, validate } from "../middlewares/validateRequ
 const router = Router();
 
 // POST /api/auth/register
-router.post("/register", registerRules, validate, register);
+router.post("/register", ...registerRules, validate, register);
 
 // POST /api/auth/login
-router.post("/login", loginRules, validate, login);
+router.post("/login", ...loginRules, validate, login);
 
 export default router;
