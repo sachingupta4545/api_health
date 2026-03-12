@@ -17,6 +17,7 @@ const checkMonitor = async (monitor) => {
             lastChecked: new Date(),
         });
 
+        
         console.log(`[Monitor ✅] "${monitor.name}" is UP`);
 
     } catch {
