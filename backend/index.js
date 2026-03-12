@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import monitorRoutes from "./routes/monitorRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +17,7 @@ await connectDB();
 
 // ─── Routes ────────────────────────────────────────
 app.use("/api/auth", authRoutes);
+app.use("/api/monitors", monitorRoutes);
 
 // ─── Health Check ───────────────────────────────────
 app.get("/", (req, res) => {
@@ -30,5 +32,5 @@ app.use((err, req, res, next) => {
 
 // ─── Start Server ────────────────────────────────────
 app.listen(PORT, () => {
-    console.log(`✅ Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
