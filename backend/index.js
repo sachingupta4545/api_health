@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import monitorRoutes from "./routes/monitorRoutes.js";
+import { startAllJobs } from "./jobs/index.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,8 +13,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// ─── Connect to Database ────────────────────────────
+// ─── Connect to Database & Start Jobs ──────────────
 await connectDB();
+startAllJobs();
 
 // ─── Routes ────────────────────────────────────────
 app.use("/api/auth", authRoutes);
