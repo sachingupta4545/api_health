@@ -1,34 +1,49 @@
 import cron from "node-cron";
 import axios from "axios";
 import { Monitor } from "../models/Monitor.js";
-
+import { MonitorLog } from "../models/MonitorLog.js";
 // Ping a single monitor and update its lastStatus + lastChecked
 const checkMonitor = async (monitor) => {
+    const start = Date.now();   // declared outside try so catch can access it
+
     try {
-        console.log(now(), "Start checking monitor", monitor.name);
-        await axios({
+        const response = await axios({
             method: monitor.method || "GET",
             url: monitor.url,
             timeout: (monitor.timeout || 10) * 1000,    // convert seconds → ms
         });
-        console.log(now(), "End checking monitor", monitor.name);
+
+        await MonitorLog.create({
+            monitorId: monitor._id,
+            status: "up",
+            statusCode: response.status,        // real status code, not hardcoded 200
+            responseTime: Date.now() - start,   // no need for separate `end` variable
+            message: `[Monitor ✅] "${monitor.name}" is UP `,
+        });
+
         await Monitor.findByIdAndUpdate(monitor._id, {
             lastStatus: "up",
             lastChecked: new Date(),
         });
 
-        
-        console.log(`[Monitor ✅] "${monitor.name}" is UP`);
+        console.log(`[Monitor ✅] "${monitor.name}" is UP (${response.status})`);
 
-    } catch {
+    } catch (error) {
+
+        await MonitorLog.create({
+            monitorId: monitor._id,
+            status: "down",
+            statusCode: error.response?.status ?? 0,    // real code if server replied, 0 if timeout
+            responseTime: Date.now() - start,           // start is accessible here now ✅
+            message: error.message,
+        });
+
         await Monitor.findByIdAndUpdate(monitor._id, {
             lastStatus: "down",
             lastChecked: new Date(),
         });
 
-        console.warn(`[Monitor ❌] "${monitor.name}" is DOWN — ${monitor.url}`);
-
-        // TODO: send email alert to monitor.alert_contact
+        console.warn(`[Monitor ❌] "${monitor.name}" is DOWN — ${error.message}`);
     }
 };
 
