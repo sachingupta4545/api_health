@@ -2,6 +2,8 @@ import cron from "node-cron";
 import axios from "axios";
 import { Monitor } from "../models/Monitor.js";
 import { MonitorLog } from "../models/MonitorLog.js";
+import { monitorQueue } from "./queues/monitorQueue.js";
+
 // Ping a single monitor and update its lastStatus + lastChecked
 const checkMonitor = async (monitor) => {
     const start = Date.now();   // declared outside try so catch can access it
@@ -51,7 +53,7 @@ const checkMonitor = async (monitor) => {
 export const startMonitorChecker = () => {
     let isRunning = false;
 
-    cron.schedule("* * * * *", async () => {
+    cron.schedule("0 * * * * *", async () => {   // every minute (at second 0)
         if (isRunning) {
             console.warn("Cron previous run still in progress, skipping...");
             return;
@@ -60,7 +62,23 @@ export const startMonitorChecker = () => {
         isRunning = true;
         try {
             const monitors = await Monitor.find({ status: "active" }); // get all active monitors
-            await Promise.allSettled(monitors.map(checkMonitor)); // run all checks concurrently
+            // await Promise.allSettled(monitors.map(checkMonitor)); // run all checks concurrently
+            monitors.forEach((monitor) => {
+                monitorQueue.add("check-monitor", { monitorId: monitor._id }, {
+                    attempts: 3,
+                    backoff: {
+                        type: "exponential",
+                        delay: 1000,
+                    },
+                    removeOnComplete: {
+                        age: 3600, // keep up to 1 hour
+                        count: 1000, // keep up to 1000 jobs
+                    },
+                    removeOnFail: {
+                        age: 24 * 3600, // keep up to 24 hours
+                    },
+                });
+            });
         } catch (error) {
             console.error("Cron Error:", error.message);
         } finally {
