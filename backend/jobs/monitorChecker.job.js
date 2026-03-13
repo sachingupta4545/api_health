@@ -34,7 +34,7 @@ const checkMonitor = async (monitor) => {
             monitorId: monitor._id,
             status: "down",
             statusCode: error.response?.status ?? 0,    // real code if server replied, 0 if timeout
-            responseTime: Date.now() - start,           // start is accessible here now ✅
+            responseTime: Date.now() - start,           // start is accessible here now 
             message: error.message,
         });
 
