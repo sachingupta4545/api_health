@@ -14,7 +14,7 @@ const monitorSchema = new mongoose.Schema(
         },
         method: {
             type: String,
-            enum: ["GET", "POST", "PUT", "DELETE"],
+            enum: ["GET", "POST", "PUT", "DELETE", "HEAD"],
             default: "GET",
         },
         interval: {

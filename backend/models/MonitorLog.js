@@ -26,6 +26,11 @@ const monitorLogSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
+        index: { expires: "30d" },  // TTL — MongoDB auto-deletes logs older than 30 days
     },
 });
+
+// Compound index for fast log queries: find logs for a monitor sorted by newest first
+monitorLogSchema.index({ monitorId: 1, createdAt: -1 });
+
 export const MonitorLog = mongoose.model("MonitorLog", monitorLogSchema);

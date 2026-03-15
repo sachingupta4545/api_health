@@ -1,6 +1,7 @@
 import { body, validationResult } from "express-validator";
 
-// ─── Validation Rules ────────────────────────────────
+// ─── Validation Rules (Create) ────────────────────────────────
+// All fields required on create
 
 export const monitorRules = [
     body("name")
@@ -16,7 +17,7 @@ export const monitorRules = [
     body("method")
         .trim()
         .notEmpty().withMessage("Method is required")
-        .isIn(["GET", "POST", "PUT", "DELETE"]).withMessage("Invalid method"),
+        .isIn(["GET", "POST", "PUT", "DELETE", "HEAD"]).withMessage("Invalid method"),
 
     body("interval")
         .trim()
@@ -37,6 +38,45 @@ export const monitorRules = [
     body("status")
         .trim()
         .notEmpty().withMessage("Status is required")
+        .isIn(["active", "paused"]).withMessage("Invalid status"),
+];
+
+// ─── Validation Rules (Update) ────────────────────────────────
+// All fields optional on update — only validate what's provided
+
+export const monitorUpdateRules = [
+    body("name")
+        .optional()
+        .trim()
+        .isLength({ min: 2 }).withMessage("Monitor name must be at least 2 characters"),
+
+    body("url")
+        .optional()
+        .trim()
+        .isURL().withMessage("Please provide a valid URL"),
+
+    body("method")
+        .optional()
+        .trim()
+        .isIn(["GET", "POST", "PUT", "DELETE", "HEAD"]).withMessage("Invalid method"),
+
+    body("interval")
+        .optional()
+        .isInt({ min: 10 }).withMessage("Interval must be at least 10 seconds"),
+
+    body("timeout")
+        .optional()
+        .isInt({ min: 1 }).withMessage("Timeout must be at least 1 second"),
+
+    body("alert_contact")
+        .optional()
+        .trim()
+        .isEmail().withMessage("Please provide a valid email")
+        .normalizeEmail(),
+
+    body("status")
+        .optional()
+        .trim()
         .isIn(["active", "paused"]).withMessage("Invalid status"),
 ];
 
