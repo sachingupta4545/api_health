@@ -10,13 +10,13 @@
     "worker:dev": "nodemon worker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-
-  
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@bull-board/api": "^6.20.5",
+    "@bull-board/express": "^6.20.5",
     "axios": "^1.13.6",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.70.4",

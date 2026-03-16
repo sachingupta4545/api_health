@@ -5,6 +5,11 @@ import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import monitorRoutes from "./routes/monitorRoutes.js";
 import { startAllJobs } from "./jobs/index.js";
+import { createBullBoard } from "@bull-board/api";
+import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
+import { ExpressAdapter } from "@bull-board/express";
+import { monitorQueue } from "./jobs/queues/monitorQueue.js";
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +24,18 @@ app.use(express.json());
 // ─── Connect to Database & Start Jobs ──────────────
 await connectDB();
 startAllJobs();
+
+// ─── BullBoard (Queue Dashboard) ───────────────────
+const serverAdapter = new ExpressAdapter();
+serverAdapter.setBasePath("/admin/queues");
+
+createBullBoard({
+    queues: [new BullMQAdapter(monitorQueue)],
+    serverAdapter: serverAdapter,
+});
+
+app.use("/admin/queues", serverAdapter.getRouter());
+
 
 // ─── Routes ────────────────────────────────────────
 app.use("/api/auth", authRoutes);
