@@ -1,6 +1,6 @@
 import { Worker } from "bullmq";
 import { redisConnection } from "../../config/redis.js";
-import { processor } from "./processors/monitorProcessor.js";  // ← imported, not inline
+import { processor } from "../processors/monitorProcessor.js";  // ← imported, not inline
 
 // ─── Worker — listens to Redis queue ─────────────────────
 export const startMonitorWorker = () => {
