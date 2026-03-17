@@ -39,6 +39,8 @@ export const processor = async (job) => {
         console.log(`[Worker ✅] "${monitor.name}" is UP (${response.status}) — ${Date.now() - start}ms`);
 
     } catch (error) {
+        await job.log(`DOWN: ${error.message}`);
+
         await MonitorLog.create({
             monitorId: monitor._id,
             status: "down",
@@ -53,6 +55,6 @@ export const processor = async (job) => {
         });
 
         console.warn(`[Worker ❌] "${monitor.name}" is DOWN — ${error.message}`);
-        throw error;   // re-throw so BullMQ retries the job
+        throw new Error(error.message);   // throw clean Error so BullBoard captures message correctly
     }
 };
