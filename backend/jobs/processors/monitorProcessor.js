@@ -36,7 +36,13 @@ export const processor = async (job) => {
             lastChecked: new Date(),
         });
 
-        console.log(`[Worker ✅] "${monitor.name}" is UP (${response.status}) — ${Date.now() - start}ms`);
+        console.log(`[Worker] "${monitor.name}" is UP (${response.status}) — ${Date.now() - start}ms`);
+
+        return {
+            status: "up",
+            statusCode: response.status,
+            responseTime: Date.now() - start,
+        };
 
     } catch (error) {
         await job.log(`DOWN: ${error.message}`);
