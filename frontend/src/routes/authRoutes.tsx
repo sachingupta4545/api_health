@@ -1,8 +1,8 @@
 import { Route, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
 import Features from "../pages/Features";
-import Login from "../pages/Login";
-import Signup from "../pages/Signup";
+import Login from "../pages/auth/Login";
+import Signup from "../pages/auth/Signup";
 import HomeLayout from "../layouts/HomeLayout";
 
 export const authRoutes = (
