@@ -28,7 +28,7 @@ export const startMonitorChecker = () => {
                     "check-monitor",
                     { monitorId: monitor._id },
                     {
-                        attempts: 3,
+                        attempts: 1,
                         backoff: { type: "exponential", delay: 1000 },
                         removeOnComplete: { age: 3600, count: 1000 },
                         removeOnFail: { age: 24 * 3600 },
