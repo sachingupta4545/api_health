@@ -33,6 +33,7 @@ export default function Signup() {
 
                 <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
                     <Form
+                    
                         name="signup"
                         onFinish={onFinish}
                         layout="vertical"
