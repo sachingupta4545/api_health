@@ -17,6 +17,7 @@ export default function Login() {
 
     const onFinish = async (values: FieldType) => {
         try {
+            console.log(values);
             await login(values);
         } catch (error) {
             console.error('Login failed:', error);
@@ -46,33 +47,27 @@ export default function Login() {
                                 { type: 'email', message: 'Please enter a valid email!' }
                             ]}
                         >
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Mail className="h-5 w-5 text-gray-400" />
-                                </div>
-                                <Input
-                                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all sm:text-sm h-auto"
-                                    placeholder="name@company.com"
-                                    variant="borderless"
-                                />
-                            </div>
+                            <Input
+                                prefix={<Mail className="h-5 w-5 text-gray-400 mr-2" />}
+                                className="w-full px-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all sm:text-sm h-auto"
+                                placeholder="name@example.com"
+                            />
                         </Form.Item>
 
                         <Form.Item<FieldType>
                             name="password"
                             label={<span className="text-sm font-semibold text-gray-700">Password</span>}
-                            rules={[{ required: true, message: 'Please input your password!' }]}
+                            rules={[{ required: true, message: 'Please input your password!' },
+                            { min: 8, message: 'Password must be at least 8 characters long' },
+                            { max: 16, message: 'Password must be at most 16 characters long' },
+                            { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, message: 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character' },
+                            ]}
                         >
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400" />
-                                </div>
-                                <Input.Password
-                                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all sm:text-sm h-auto"
-                                    placeholder="••••••••"
-                                    variant="borderless"
-                                />
-                            </div>
+                            <Input.Password
+                                prefix={<Lock className="h-5 w-5 text-gray-400 mr-2" />}
+                                className="w-full px-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all sm:text-sm h-auto"
+                                placeholder="••••••••"
+                            />
                         </Form.Item>
 
                         <div className="flex items-center justify-between">

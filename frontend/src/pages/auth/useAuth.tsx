@@ -11,7 +11,10 @@ export const useAuth = () => {
         setError(null);
         try {
             const response = await Register(data);
-            setUser(response);
+            if (response.token) {
+                localStorage.setItem("token", response.token);
+            }
+            setUser(response.user);
             return response;
         } catch (error: any) {
             setError(error.message);
@@ -26,7 +29,10 @@ export const useAuth = () => {
         setError(null);
         try {
             const response = await Login(data);
-            setUser(response);
+            if (response.token) {
+                localStorage.setItem("token", response.token);
+            }
+            setUser(response.user);
             return response;
         } catch (error: any) {
             setError(error.message);
