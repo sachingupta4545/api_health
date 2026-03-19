@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice, isRejectedWithValue } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { Register } from '@/services/authService'
 
 export interface RegisterState {
@@ -8,7 +7,7 @@ export interface RegisterState {
     error: any,
 }
 
-const RegisterAuth = createAsyncThunk('register', Register)
+export const RegisterAuth = createAsyncThunk('register', Register)
 const initialState: RegisterState = {
     items: [],
     loading: false,

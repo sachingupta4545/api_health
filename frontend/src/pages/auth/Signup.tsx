@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Mail, User, Lock, ArrowRight } from 'lucide-react';
 import { Button, Form, Input } from 'antd';
-import { useAuth } from "./useAuth";
+import { useAppDispatch, useAppSelector } from '@/redux/Store';
+import { RegisterAuth } from '@/redux/RegisterSlice';
 
 
 type FieldType = {
@@ -13,14 +14,15 @@ type FieldType = {
 
 
 export default function Signup() {
-    const { register, loading, error } = useAuth();
+    const dispatch = useAppDispatch();
+    const { loading, error } = useAppSelector((state) => state.RegisterReducer);
 
     const onFinish = async (values: FieldType) => {
         try {
             console.log(values);
-            await register(values);
+            await dispatch(RegisterAuth(values));
         } catch (error) {
-            console.error('Login failed:', error);
+            console.error('Register failed:', error);
         }
     };
 
