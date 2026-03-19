@@ -7,6 +7,7 @@ export interface RegisterState {
     error: any,
 }
 
+
 export const RegisterAuth = createAsyncThunk('register', Register)
 const initialState: RegisterState = {
     items: [],
