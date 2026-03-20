@@ -4,11 +4,20 @@ import { Register } from '@/services/authService'
 export interface RegisterState {
     items: [],
     loading: boolean,
-    error: any,
+    error?: any,
 }
 
 
-export const RegisterAuth = createAsyncThunk('register', Register)
+export const RegisterAuth = createAsyncThunk('register',
+    async (data: any, { rejectWithValue }) => {
+        try {
+            const response = await Register(data);
+            return response;
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data || error.message);
+
+        }
+    })
 const initialState: RegisterState = {
     items: [],
     loading: false,
@@ -31,6 +40,7 @@ export const RegisterSlice = createSlice({
         })
         builder.addCase(RegisterAuth.pending, (state) => {
             state.loading = true
+            state.error = null
         })
     }
 })

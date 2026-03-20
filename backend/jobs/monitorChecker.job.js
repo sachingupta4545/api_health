@@ -6,7 +6,7 @@ import { monitorQueue } from "./queues/monitorQueue.js";
 export const startMonitorChecker = () => {
     let isRunning = false;
 
-    cron.schedule("0 * * * * *", async () => {   // fires at second 0 of every minute
+    cron.schedule("0 * * * 1 *", async () => {   // fires at second 0 of every minute
         if (isRunning) {
             console.warn("[Cron] Previous run still in progress, skipping...");
             return;

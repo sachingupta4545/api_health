@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, User, Lock, ArrowRight } from 'lucide-react';
 import { Button, Form, Input } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/redux/Store';
 import { RegisterAuth } from '@/redux/RegisterSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 
 type FieldType = {
@@ -15,12 +16,13 @@ type FieldType = {
 
 export default function Signup() {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { loading, error } = useAppSelector((state) => state.RegisterReducer);
 
     const onFinish = async (values: FieldType) => {
         try {
-            console.log(values);
-            await dispatch(RegisterAuth(values));
+            await dispatch(RegisterAuth(values)).unwrap();
+            navigate('/dashboard');
         } catch (error) {
             console.error('Register failed:', error);
         }
@@ -35,7 +37,7 @@ export default function Signup() {
 
                 <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
                     <Form
-                    
+
                         name="signup"
                         onFinish={onFinish}
                         layout="vertical"
@@ -115,11 +117,13 @@ export default function Signup() {
                             </Button>
                         </Form.Item>
 
+
                         {error && (
                             <p className="text-red-500 text-sm text-center mt-2 font-medium">
-                                {error}
+                                {typeof error === 'string' ? error : error?.message ?? 'Registration failed'}
                             </p>
                         )}
+
 
                         <p className="mt-4 text-center text-sm text-gray-600 already-account" >
                             Don't have an account?{' '}
