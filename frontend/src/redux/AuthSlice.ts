@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { RegisterAuth } from './RegisterSlice'
+import { LoginAuth } from './LoginSlice'
 
 export interface AuthState {
     token: string | null
@@ -29,6 +30,12 @@ export const AuthSlice = createSlice({
     extraReducers: (builder) => {
         // When Register succeeds → store token + user
         builder.addCase(RegisterAuth.fulfilled, (state, action) => {
+            state.token = action.payload.token
+            state.user = action.payload.user
+            localStorage.setItem('token', action.payload.token)
+        })
+        // When Login succeeds → store token + user
+        builder.addCase(LoginAuth.fulfilled, (state, action) => {
             state.token = action.payload.token
             state.user = action.payload.user
             localStorage.setItem('token', action.payload.token)

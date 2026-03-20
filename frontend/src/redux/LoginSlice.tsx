@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { Login } from '@/services/authService'
 
-export interface RegisterState {
+export interface LoginState {
     items: [],
     loading: boolean,
     error?: any,
@@ -18,14 +18,14 @@ export const LoginAuth = createAsyncThunk('login',
 
         }
     })
-const initialState: RegisterState = {
+const initialState: LoginState = {
     items: [],
     loading: false,
     error: null,
 }
 
-export const RegisterSlice = createSlice({
-    name: 'RegisterSlice',
+export const LoginSlice = createSlice({
+    name: 'LoginSlice',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
@@ -46,4 +46,4 @@ export const RegisterSlice = createSlice({
 })
 
 
-export default RegisterSlice.reducer
+export default LoginSlice.reducer
