@@ -8,5 +8,6 @@ export default function AuthMiddleware() {
         return <Navigate to="/dashboard" replace />;
     }
 
+    
     return <Outlet />;
 }
