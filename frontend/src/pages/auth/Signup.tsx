@@ -3,7 +3,6 @@ import { Mail, User, Lock, ArrowRight } from 'lucide-react';
 import { Button, Form, Input } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/redux/Store';
 import { RegisterAuth } from '@/redux/RegisterSlice';
-import { unwrapResult } from '@reduxjs/toolkit';
 
 
 type FieldType = {
@@ -22,7 +21,7 @@ export default function Signup() {
     const onFinish = async (values: FieldType) => {
         try {
             await dispatch(RegisterAuth(values)).unwrap();
-            navigate('/dashboard');
+            navigate('/dashboard', { replace: true });
         } catch (error) {
             console.error('Register failed:', error);
         }
