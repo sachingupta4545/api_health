@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
-import { useAuth } from './useAuth';
-import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
+import { useAppDispatch, useAppSelector } from '@/redux/Store';
+import { LoginAuth } from '@/redux/LoginSlice';
 
 
 type FieldType = {
@@ -13,12 +12,15 @@ type FieldType = {
 
 
 export default function Login() {
-    const { login, loading, error } = useAuth();
+    const dispatch = useAppDispatch();
+    const { loading, error } = useAppSelector((state) => state.LoginReducer);
+    const navigate = useNavigate();
+
 
     const onFinish = async (values: FieldType) => {
         try {
-            console.log(values);
-            await login(values);
+            await dispatch(LoginAuth(values)).unwrap();
+            navigate('/dashboard', { replace: true });
         } catch (error) {
             console.error('Login failed:', error);
         }
@@ -96,7 +98,7 @@ export default function Login() {
 
                         {error && (
                             <p className="text-red-500 text-sm text-center mt-2 font-medium">
-                                {error}
+                                {typeof error === 'string' ? error : error.message ?? 'Something went wrong'}
                             </p>
                         )}
 
