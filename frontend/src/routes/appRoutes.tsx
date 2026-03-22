@@ -8,7 +8,7 @@ import AuthMiddleware from "../middleware/AuthMiddleware";
 export const appRoutes = (
     <Route element={<AuthMiddleware />}>
         <Route element={<DashboardLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard /> } />
             <Route path="/monitors" element={<MonitorPage />} />
             <Route path="/monitors/create" element={<MonitorCreatePage />} />
             <Route path="/incidents" element={<div className="p-8"><h1 className="text-2xl font-bold">Incidents Page (Coming Soon)</h1></div>} />

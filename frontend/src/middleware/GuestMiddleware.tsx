@@ -1,14 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "@/redux/Store";
 
-export default function AuthMiddleware() {
+export default function GuestMiddleware() {
     const token = useAppSelector((state) => state.auth.token);
-    console.log(token);
-    if (!token) {
-        console.log("hlo guys");
-        return <Navigate to="/login" replace />;
+    if (token) {
+        return <Navigate to="/dashboard" replace />;
     }
-
-
     return <Outlet />;
 }
