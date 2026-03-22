@@ -43,9 +43,10 @@ export default function Navbar() {
                     <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600">
                         <User className="w-5 h-5" />
                     </div>
+
                     <div className="hidden md:block text-left">
                         <p className="text-xs font-bold text-gray-900 group-hover:text-sky-600 transition-colors">Sachin Gupta</p>
-                        <p className="text-[10px] font-medium text-gray-400">Pro Developer</p>
+                        <p className="text-[10px] font-medium text-gray-400">ProDeveloper</p>
                     </div>
                 </button>
 
