@@ -1,12 +1,13 @@
 import React from 'react';
 import { Bell, User, LayoutGrid, Search, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '@/redux/Store';
+import { useAppDispatch, useAppSelector } from '@/redux/Store';
 import { logout } from '@/redux/AuthSlice';
 
 export default function Navbar() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const user = useAppSelector((state) => state.auth.user);
 
     const handleLogout = () => {
         dispatch(logout());
@@ -45,8 +46,12 @@ export default function Navbar() {
                     </div>
 
                     <div className="hidden md:block text-left">
-                        <p className="text-xs font-bold text-gray-900 group-hover:text-sky-600 transition-colors">Sachin Gupta</p>
-                        <p className="text-[10px] font-medium text-gray-400">ProDeveloper</p>
+                        <p className="text-xs font-bold text-gray-900 group-hover:text-sky-600 transition-colors">
+                            {user?.name ?? 'Guest'}
+                        </p>
+                        <p className="text-[10px] font-medium text-gray-400">
+                            {user?.email ?? ''}
+                        </p>
                     </div>
                 </button>
 

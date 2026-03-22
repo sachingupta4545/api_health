@@ -11,10 +11,12 @@ export interface AuthState {
     } | null
 }
 
+const storedUser = localStorage.getItem('user')
+
 const initialState: AuthState = {
-    // Read token from localStorage so auth survives page refresh
+    // Read token + user from localStorage so auth survives page refresh
     token: localStorage.getItem('token'),
-    user: null,
+    user: storedUser ? JSON.parse(storedUser) : null,
 }
 
 export const AuthSlice = createSlice({
@@ -25,6 +27,7 @@ export const AuthSlice = createSlice({
             state.token = null
             state.user = null
             localStorage.removeItem('token')
+            localStorage.removeItem('user')
         },
     },
     extraReducers: (builder) => {
@@ -33,12 +36,14 @@ export const AuthSlice = createSlice({
             state.token = action.payload.token
             state.user = action.payload.user
             localStorage.setItem('token', action.payload.token)
+            localStorage.setItem('user', JSON.stringify(action.payload.user))
         })
         // When Login succeeds → store token + user
         builder.addCase(LoginAuth.fulfilled, (state, action) => {
             state.token = action.payload.token
             state.user = action.payload.user
             localStorage.setItem('token', action.payload.token)
+            localStorage.setItem('user', JSON.stringify(action.payload.user))
         })
     },
 })
