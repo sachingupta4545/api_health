@@ -3,9 +3,7 @@ import { useAppSelector } from "@/redux/Store";
 
 export default function AuthMiddleware() {
     const token = useAppSelector((state) => state.auth.token);
-    console.log(token);
     if (!token) {
-        console.log("hlo guys");
         return <Navigate to="/login" replace />;
     }
 
