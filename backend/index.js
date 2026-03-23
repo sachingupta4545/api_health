@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import monitorRoutes from "./routes/monitorRoutes.js";
+import alertRoutes from "./routes/alertRoutes.js";
 import { startAllJobs } from "./jobs/index.js";
 import { createBullBoard } from "@bull-board/api";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
@@ -40,6 +41,7 @@ app.use("/admin/queues", serverAdapter.getRouter());
 // ─── Routes ────────────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/monitors", monitorRoutes);
+app.use("/api/alerts", alertRoutes);
 
 // ─── Health Check ───────────────────────────────────
 app.get("/", (req, res) => {

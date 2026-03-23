@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
     Form, Input, Select, Button, Card, Breadcrumb, Alert,
-    Space, Typography, Checkbox, Divider, InputNumber, message, Spin
+    Space, Typography, InputNumber, message, Spin
 } from 'antd';
-import { SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import {
+    SaveOutlined, ArrowLeftOutlined, MailOutlined,
+} from '@ant-design/icons';
+import * as alertService from '../../services/alertService';
+import * as monitorService from '../../services/monitorService';
 
 const { Title, Text } = Typography;
-
-const monitors = [
-    'Auth Service', 'Payment Gateway', 'Admin API', 'User Database',
-    'Notification Hub', 'Storage Hook', 'Search Engine', 'Analytics API', 'Worker Node 1',
-];
 
 const conditions = [
     { label: 'Monitor goes down', value: 'down' },
@@ -20,33 +19,69 @@ const conditions = [
     { label: 'Unexpected HTTP status code', value: 'status_code' },
 ];
 
-const channels = [
-    { label: 'Email', value: 'email' },
-    { label: 'Slack', value: 'slack' },
-    { label: 'Webhook', value: 'webhook' },
-    { label: 'PagerDuty', value: 'pagerduty' },
-];
-
 export default function AlertCreatePage() {
     const navigate = useNavigate();
     const { id } = useParams<{ id?: string }>();
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
+    const [monitors, setMonitors] = useState<monitorService.Monitor[]>([]);
     const [condition, setCondition] = useState<string>('down');
     const isEdit = Boolean(id);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const monitorsData = await monitorService.getMonitors();
+                setMonitors(monitorsData.monitors);
+
+                if (isEdit && id) {
+                    const alertData = await alertService.getAlertById(id);
+                    const alert = alertData.alert;
+                    form.setFieldsValue({
+                        ...alert,
+                        monitor: alert.monitor._id,
+                        emails: alert.emails.join(', '),
+                        // Map threshold to correct field based on condition
+                        ssl_days: alert.condition === 'ssl_expiry' ? alert.threshold : 14,
+                        threshold: alert.condition === 'slow' ? alert.threshold : 3000,
+                    });
+                    setCondition(alert.condition);
+                }
+            } catch (err: any) {
+                message.error('Failed to load required data');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [id, isEdit, form]);
 
     const onFinish = async (values: any) => {
         setSubmitting(true);
         setSubmitError(null);
         try {
-            // Simulated API delay
-            await new Promise((r) => setTimeout(r, 800));
-            console.log('Alert rule payload:', values);
-            message.success(`Alert rule ${isEdit ? 'updated' : 'created'} successfully!`);
+            const payload = {
+                ...values,
+                // Combine threshold fields into one based on condition
+                threshold: values.condition === 'slow' ? values.threshold : 
+                           values.condition === 'ssl_expiry' ? values.ssl_days : 0,
+                emails: values.emails.split(',').map((e: string) => e.trim()).filter(Boolean),
+            };
+
+            if (isEdit && id) {
+                await alertService.updateAlert(id, payload);
+                message.success('Alert rule updated successfully!');
+            } else {
+                await alertService.createAlert(payload);
+                message.success('Alert rule created successfully!');
+            }
             navigate('/alerts');
         } catch (err: any) {
-            setSubmitError(err?.message ?? 'An unexpected error occurred. Please try again.');
+            setSubmitError(err.response?.data?.message || err.message || 'An unexpected error occurred. Please try again.');
         } finally {
             setSubmitting(false);
         }
@@ -82,7 +117,7 @@ export default function AlertCreatePage() {
                 />
             )}
 
-            <Spin spinning={submitting}>
+            <Spin spinning={loading || submitting}>
                 <Form
                     form={form}
                     layout="vertical"
@@ -109,10 +144,10 @@ export default function AlertCreatePage() {
                         >
                             <Select
                                 placeholder="Select a monitor to watch"
-                                options={monitors.map((m) => ({ label: m, value: m }))}
+                                options={monitors.map((m) => ({ label: m.name, value: m._id }))}
                                 showSearch
                                 filterOption={(input, option) =>
-                                    (option?.label as string).toLowerCase().includes(input.toLowerCase())
+                                    String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                                 }
                             />
                         </Form.Item>
@@ -175,41 +210,33 @@ export default function AlertCreatePage() {
                         )}
                     </Card>
 
-                    <Card title="Notification Channels" className="rounded-xl shadow-sm border-gray-100 mb-4">
+                    <Card title="Email Notification" className="rounded-xl shadow-sm border-gray-100 mb-4">
                         <Form.Item
-                            label="Notify via"
-                            name="channels"
-                            rules={[{ required: true, message: 'Please select at least one channel' }]}
-                        >
-                            <Checkbox.Group options={channels} className="flex flex-col gap-2" />
-                        </Form.Item>
-
-                        <Divider />
-
-                        <Form.Item
-                            label="Email Recipients"
+                            label="Recipient Emails"
                             name="emails"
-                            extra="Separate multiple emails with commas"
-                        >
-                            <Input placeholder="team@example.com, ops@example.com" />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Slack Webhook URL"
-                            name="slack_webhook"
                             rules={[
+                                { required: true, message: 'Please enter at least one email address' },
                                 {
-                                    type: 'url',
-                                    message: 'Please enter a valid URL',
-                                    warningOnly: true,
+                                    validator(_, value) {
+                                        if (!value) return Promise.resolve();
+                                        const emails = value.split(',').map((e: string) => e.trim()).filter(Boolean);
+                                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                        const invalid = emails.find((e: string) => !emailRegex.test(e));
+                                        return invalid
+                                            ? Promise.reject(new Error(`"${invalid}" is not a valid email address`))
+                                            : Promise.resolve();
+                                    },
                                 },
                             ]}
+                            extra="Separate multiple email addresses with commas"
                         >
-                            <Input placeholder="https://hooks.slack.com/services/..." />
+                            <Input
+                                prefix={<MailOutlined />}
+                                placeholder="team@example.com, ops@example.com"
+                            />
                         </Form.Item>
                     </Card>
 
-                    {/* Actions */}
                     <Space>
                         <Button
                             type="primary"
