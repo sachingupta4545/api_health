@@ -34,7 +34,7 @@ const monitorSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["active", "paused"],
+            enum: ["active", "paused", "unknown"],
             default: "active",
         },
         // ─── Written by the cron job ───────────────
