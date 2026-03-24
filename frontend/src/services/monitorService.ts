@@ -13,6 +13,6 @@ export interface Monitor {
 }
 
 export const getMonitors = async () => {
-    const response = await api.get("/api/monitors");
+    const response = await api.get("/monitors");
     return response.data;
 };

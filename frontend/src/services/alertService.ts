@@ -20,26 +20,26 @@ export interface AlertRule {
 }
 
 export const getAlerts = async () => {
-    const response = await api.get("/api/alerts");
+    const response = await api.get("/alerts");
     return response.data;
 };
 
 export const getAlertById = async (id: string) => {
-    const response = await api.get(`/api/alerts/${id}`);
+    const response = await api.get(`/alerts/${id}`);
     return response.data;
 };
 
 export const createAlert = async (data: any) => {
-    const response = await api.post("/api/alerts", data);
+    const response = await api.post("/alerts", data);
     return response.data;
 };
 
 export const updateAlert = async (id: string, data: any) => {
-    const response = await api.put(`/api/alerts/${id}`, data);
+    const response = await api.put(`/alerts/${id}`, data);
     return response.data;
 };
 
 export const deleteAlert = async (id: string) => {
-    const response = await api.delete(`/api/alerts/${id}`);
+    const response = await api.delete(`/alerts/${id}`);
     return response.data;
 };

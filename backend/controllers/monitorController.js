@@ -32,7 +32,7 @@ export const createMonitor = async (req, res) => {
 export const getMonitors = async (req, res) => {
     try {
         const monitors = await Monitor.find({ owner: req.user._id }).sort({ createdAt: -1 });
-
+        console.log(monitors);
         res.status(200).json({ count: monitors.length, monitors });
     } catch (error) {
         console.error("getMonitors Error:", error.message);
