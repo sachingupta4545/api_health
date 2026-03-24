@@ -26,8 +26,13 @@ export const getMonitorById = async (id: string) => {
 };
 
 export const createMonitor = async (data: Partial<Monitor>) => {
-    const response = await api.post("/monitors", data);
-    return response.data;
+    try {
+        const response = await api.post("/monitors", data);
+        return response.data;
+    } catch (error) {
+        console.error('Create Monitor Error:', error);
+        throw error;
+    }
 };
 
 export const updateMonitor = async (id: string, data: Partial<Monitor>) => {

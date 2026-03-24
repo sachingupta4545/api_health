@@ -1,13 +1,13 @@
-import React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-    Form, 
-    Input, 
-    Button, 
-    Select, 
-    Card, 
-    Typography, 
-    Row, 
+import {
+    Form,
+    Input,
+    Button,
+    Select,
+    Card,
+    Typography,
+    Row,
     Col,
     notification
 } from 'antd';
@@ -18,7 +18,9 @@ const { Title, Text } = Typography;
 export default function MonitorCreatePage() {
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<any>(null);
+
 
     const onFinish = async (values: any) => {
         setLoading(true);
@@ -29,17 +31,18 @@ export default function MonitorCreatePage() {
                 alert_contact: values.alerts,
                 status: 'active'
             };
-            
+
             await createMonitor(payload);
-            
+
             notification.success({
                 message: 'Success',
                 description: 'Monitor created successfully',
                 placement: 'topRight',
             });
-            
+
             navigate('/monitors');
         } catch (error: any) {
+            setError(error);
             console.error('Create Monitor Error:', error);
             notification.error({
                 message: 'Error',
@@ -56,8 +59,8 @@ export default function MonitorCreatePage() {
             <Title level={2} className="!mb-8 !text-[#0F172A] !font-extrabold tracking-tight">
                 Add Monitor
             </Title>
-            
-            <Card 
+
+            <Card
                 className="shadow-sm border-gray-100 rounded-2xl"
                 bodyStyle={{ padding: '32px' }}
             >
@@ -84,8 +87,8 @@ export default function MonitorCreatePage() {
                         name="name"
                         rules={[{ required: true, message: 'Please enter a monitor name' }]}
                     >
-                        <Input 
-                            placeholder="e.g. Users API" 
+                        <Input
+                            placeholder="e.g. Users API"
                             className="h-12 rounded-xl bg-gray-50 border-gray-100 hover:border-sky-500 focus:border-sky-500 transition-all font-medium"
                         />
                     </Form.Item>
@@ -98,8 +101,8 @@ export default function MonitorCreatePage() {
                             { type: 'url', message: 'Please enter a valid URL' }
                         ]}
                     >
-                        <Input 
-                            placeholder="https://api.example.com/health" 
+                        <Input
+                            placeholder="https://api.example.com/health"
                             className="h-12 rounded-xl bg-gray-50 border-gray-100 hover:border-sky-500 focus:border-sky-500 transition-all font-medium"
                         />
                     </Form.Item>
@@ -110,7 +113,7 @@ export default function MonitorCreatePage() {
                                 label={<span className="font-bold text-gray-600">HTTP Method</span>}
                                 name="method"
                             >
-                                <Select 
+                                <Select
                                     className="h-12 rounded-xl bg-gray-50 border-gray-100"
                                     options={[
                                         { value: 'GET', label: 'GET' },
@@ -127,7 +130,7 @@ export default function MonitorCreatePage() {
                                 label={<span className="font-bold text-gray-600">Check Interval</span>}
                                 name="interval"
                             >
-                                <Select 
+                                <Select
                                     className="h-12 rounded-xl bg-gray-50 border-gray-100"
                                     options={[
                                         { value: 60, label: 'Every 60 seconds' },
@@ -147,9 +150,9 @@ export default function MonitorCreatePage() {
                                 label={<span className="font-bold text-gray-600">Timeout (seconds)</span>}
                                 name="timeout"
                             >
-                                <Input 
+                                <Input
                                     type="number"
-                                    placeholder="10" 
+                                    placeholder="10"
                                     className="h-12 rounded-xl bg-gray-50 border-gray-100 hover:border-sky-500 focus:border-sky-500 transition-all font-medium"
                                 />
                             </Form.Item>
@@ -159,24 +162,25 @@ export default function MonitorCreatePage() {
                                 label={<span className="font-bold text-gray-600">Alert Contacts</span>}
                                 name="alerts"
                             >
-                                <Input 
-                                    placeholder="team@example.com" 
+                                <Input
+                                    placeholder="team@example.com"
                                     className="h-12 rounded-xl bg-gray-50 border-gray-100 hover:border-sky-500 focus:border-sky-500 transition-all font-medium"
                                 />
                             </Form.Item>
                         </Col>
                     </Row>
+                    {error ? <Text type="danger">{error.response?.data?.message ?? "Something went wrong"}</Text> : ""}
 
                     <div className="pt-6 flex gap-4">
-                        <Button 
-                            type="primary" 
+                        <Button
+                            type="primary"
                             htmlType="submit"
                             loading={loading}
                             className="h-12 px-8 rounded-xl bg-sky-500 hover:bg-sky-600 border-none font-bold text-sm transition-all shadow-md shadow-sky-200"
                         >
                             Create Monitor
                         </Button>
-                        <Button 
+                        <Button
                             onClick={() => navigate('/monitors')}
                             className="h-12 px-8 rounded-xl bg-gray-50 hover:bg-gray-100 border-gray-100 text-gray-600 font-bold text-sm transition-all"
                         >
