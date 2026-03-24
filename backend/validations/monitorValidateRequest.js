@@ -36,8 +36,8 @@ export const monitorRules = [
         .normalizeEmail(),
 
     body("status")
+        .optional()
         .trim()
-        .notEmpty().withMessage("Status is required")
         .isIn(["active", "paused"]).withMessage("Invalid status"),
 ];
 

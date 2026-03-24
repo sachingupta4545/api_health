@@ -1,144 +1,77 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Space, Table, Tag, Button } from 'antd';
+import { Space, Table, Tag, Button, notification, Modal } from 'antd';
 import { Pencil, Trash2, Plus } from 'lucide-react';
+import { getMonitors, deleteMonitor, Monitor } from '../../services/monitorService';
 const { Column } = Table;
 
-interface DataType {
-    key: React.Key;
-    name: string;
-    url: string;
-    method: string;
-    status: string;
-    responsetime: string;
-    interval: string;
-    lastChecked: any;
-}
+// Using the Monitor interface from the service
 
-const data: DataType[] = [
-    {
-        key: '2',
-        name: 'Jane',
-        url: 'example.com/api/v1',
-        method: 'POST',
-        status: 'Up',
-        responsetime: '150ms',
-        interval: '10m',
-        lastChecked: '2022-01-01 12:05:00',
-    },
-    {
-        key: '3',
-        name: 'Admin API',
-        url: 'api.admin.pulse',
-        method: 'GET',
-        status: 'Down',
-        responsetime: '0ms',
-        interval: '1m',
-        lastChecked: '2022-01-01 12:10:00',
-    },
-    {
-        key: '4',
-        name: 'Auth Service',
-        url: 'auth.guard.com',
-        method: 'POST',
-        status: 'Up',
-        responsetime: '85ms',
-        interval: '5m',
-        lastChecked: '2022-01-01 12:15:00',
-    },
-    {
-        key: '5',
-        name: 'User Database',
-        url: 'db.internal.check',
-        method: 'GET',
-        status: 'Up',
-        responsetime: '12ms',
-        interval: '15m',
-        lastChecked: '2022-01-01 12:20:00',
-    },
-    {
-        key: '6',
-        name: 'Payment Gateway',
-        url: 'stripe.external.api',
-        method: 'POST',
-        status: 'Up',
-        responsetime: '210ms',
-        interval: '5m',
-        lastChecked: '2022-01-01 12:25:00',
-    },
-    {
-        key: '7',
-        name: 'Notification Hub',
-        url: 'push.notify.com',
-        method: 'GET',
-        status: 'Up',
-        responsetime: '45ms',
-        interval: '10m',
-        lastChecked: '2022-01-01 12:30:00',
-    },
-    {
-        key: '8',
-        name: 'Storage Hook',
-        url: 's3.check.internal',
-        method: 'HEAD',
-        status: 'Up',
-        responsetime: '33ms',
-        interval: '5m',
-        lastChecked: '2022-01-01 12:35:00',
-    },
-    {
-        key: '9',
-        name: 'Search Engine',
-        url: 'search.pulse.local',
-        method: 'GET',
-        status: 'Down',
-        responsetime: '0ms',
-        interval: '2m',
-        lastChecked: '2022-01-01 12:40:00',
-    },
-    {
-        key: '10',
-        name: 'Analytics API',
-        url: 'stats.internal.check',
-        method: 'POST',
-        status: 'Up',
-        responsetime: '178ms',
-        interval: '5m',
-        lastChecked: '2022-01-01 12:45:00',
-    },
-    {
-        key: '11',
-        name: 'Worker Node 1',
-        url: 'node1.cluster.local',
-        method: 'GET',
-        status: 'Up',
-        responsetime: '5ms',
-        interval: '1m',
-        lastChecked: '2022-01-01 12:50:00',
-    },
-    {
-        key: '1',
-        name: 'John',
-        url: 'Brown',
-        method: 'GET',
-        status: 'Up',
-        responsetime: '100ms',
-        interval: '5m',
-        lastChecked: '2022-01-01 12:00:00',
-    },
-];
+// Static data removed
 
 export default function MonitorPage() {
-
     const navigate = useNavigate();
+    const [monitors, setMonitors] = React.useState<Monitor[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    const fetchMonitors = async () => {
+        try {
+            setLoading(true);
+            const data = await getMonitors();
+            setMonitors(data.monitors || []);
+        } catch (error) {
+            console.error('Fetch Monitors Error:', error);
+            notification.error({
+                message: 'Error',
+                description: 'Failed to fetch monitors',
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    React.useEffect(() => {
+        fetchMonitors();
+    }, []);
+
+    const handleDelete = (id: string) => {
+        Modal.confirm({
+            title: 'Are you sure you want to delete this monitor?',
+            content: 'This action cannot be undone.',
+            okText: 'Yes, Delete',
+            okType: 'danger',
+            cancelText: 'No',
+            async onOk() {
+                try {
+                    await deleteMonitor(id);
+                    notification.success({
+                        message: 'Success',
+                        description: 'Monitor deleted successfully',
+                    });
+                    fetchMonitors();
+                } catch (error) {
+                    console.error('Delete Monitor Error:', error);
+                    notification.error({
+                        message: 'Error',
+                        description: 'Failed to delete monitor',
+                    });
+                }
+            },
+        });
+    };
+
     return (
         <>
             <div className="flex justify-end mb-4">
-                <Button type="primary" onClick={() => navigate('/monitors/create')}>
-                    <Plus /> Add Monitor
+                <Button type="primary" onClick={() => navigate('/monitors/create')} className="flex items-center gap-2">
+                    <Plus size={18} /> Add Monitor
                 </Button>
             </div>
-            <Table<DataType> dataSource={data} style={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}
+            <Table<Monitor> 
+                dataSource={monitors} 
+                rowKey="_id"
+                loading={loading}
+                style={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}
                 pagination={{
                     pageSize: 7,
                     showTotal: (total, range) => (
@@ -151,24 +84,28 @@ export default function MonitorPage() {
                 <Column title="Name" dataIndex="name" key="name" />
                 <Column title="URL" dataIndex="url" key="url" />
                 <Column title="Method" dataIndex="method" key="method" />
-                <Column title="Status" dataIndex="status" key="status"
+                <Column title="Status" dataIndex="lastStatus" key="lastStatus"
                     render={(text: string) => {
+                        const colorMap: any = {
+                            up: 'green',
+                            down: 'red',
+                            unknown: 'gray',
+                        };
                         return (
-                            <Tag color={text === 'Up' ? 'green' : 'red'}>
-                                {text}
+                            <Tag color={colorMap[text] || 'gray'}>
+                                {text ? text.toUpperCase() : 'UNKNOWN'}
                             </Tag>
                         );
                     }} />
-                <Column title="Response Time" dataIndex="responsetime" key="responsetime" />
-                <Column title="Interval" dataIndex="interval" key="interval" />
-                <Column title="Last Checked" dataIndex="lastChecked" key="lastChecked" />
+                <Column title="Interval" dataIndex="interval" key="interval" render={(val) => `${val}s`} />
+                <Column title="Last Checked" dataIndex="lastChecked" key="lastChecked" render={(val) => val ? new Date(val).toLocaleString() : 'Never'} />
                 <Column
                     title="Action"
                     key="action"
-                    render={(_: any, record: DataType) => (
+                    render={(_: any, record: Monitor) => (
                         <Space size="middle">
-                            <a className="text-blue-500 hover:text-blue-600 cursor-pointer"> <Pencil /></a>
-                            <a className="text-red-500 hover:text-red-600 cursor-pointer"> <Trash2 /></a>
+                            <a onClick={() => navigate(`/monitors/edit/${record._id}`)} className="text-blue-500 hover:text-blue-600 cursor-pointer"> <Pencil size={18} /></a>
+                            <a onClick={() => handleDelete(record._id)} className="text-red-500 hover:text-red-600 cursor-pointer"> <Trash2 size={18} /></a>
                         </Space>
                     )}
                 />

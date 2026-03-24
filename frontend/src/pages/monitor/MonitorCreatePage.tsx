@@ -8,19 +8,47 @@ import {
     Card, 
     Typography, 
     Row, 
-    Col 
+    Col,
+    notification
 } from 'antd';
+import { createMonitor } from '../../services/monitorService';
 
 const { Title, Text } = Typography;
 
 export default function MonitorCreatePage() {
     const navigate = useNavigate();
     const [form] = Form.useForm();
+    const [loading, setLoading] = React.useState(false);
 
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
-        // Here we would typically call an API to save the monitor
-        navigate('/monitors');
+    const onFinish = async (values: any) => {
+        setLoading(true);
+        try {
+            // Map 'alerts' to 'alert_contact' and add default 'status'
+            const payload = {
+                ...values,
+                alert_contact: values.alerts,
+                status: 'active'
+            };
+            
+            await createMonitor(payload);
+            
+            notification.success({
+                message: 'Success',
+                description: 'Monitor created successfully',
+                placement: 'topRight',
+            });
+            
+            navigate('/monitors');
+        } catch (error: any) {
+            console.error('Create Monitor Error:', error);
+            notification.error({
+                message: 'Error',
+                description: error.response?.data?.message || 'Failed to create monitor',
+                placement: 'topRight',
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -47,7 +75,7 @@ export default function MonitorCreatePage() {
                     initialValues={{
                         method: 'GET',
                         interval: 60,
-                        timeout: 5000
+                        timeout: 10
                     }}
                     className="space-y-4"
                 >
@@ -116,12 +144,12 @@ export default function MonitorCreatePage() {
                     <Row gutter={24}>
                         <Col span={12}>
                             <Form.Item
-                                label={<span className="font-bold text-gray-600">Timeout (ms)</span>}
+                                label={<span className="font-bold text-gray-600">Timeout (seconds)</span>}
                                 name="timeout"
                             >
                                 <Input 
                                     type="number"
-                                    placeholder="5000" 
+                                    placeholder="10" 
                                     className="h-12 rounded-xl bg-gray-50 border-gray-100 hover:border-sky-500 focus:border-sky-500 transition-all font-medium"
                                 />
                             </Form.Item>
@@ -143,6 +171,7 @@ export default function MonitorCreatePage() {
                         <Button 
                             type="primary" 
                             htmlType="submit"
+                            loading={loading}
                             className="h-12 px-8 rounded-xl bg-sky-500 hover:bg-sky-600 border-none font-bold text-sm transition-all shadow-md shadow-sky-200"
                         >
                             Create Monitor
