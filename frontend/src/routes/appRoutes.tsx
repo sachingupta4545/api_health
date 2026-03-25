@@ -17,6 +17,7 @@ export const appRoutes = (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/monitors" element={<MonitorPage />} />
             <Route path="/monitors/create" element={<MonitorCreatePage />} />
+            <Route path="/monitors/edit/:id" element={<MonitorCreatePage />} />
             <Route path="/incidents" element={<IncidentsPage />} />
             <Route path="/incidents/:id" element={<IncidentDetailPage />} />
             <Route path="/alerts" element={<AlertsPage />} />

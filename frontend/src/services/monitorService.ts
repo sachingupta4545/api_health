@@ -44,3 +44,8 @@ export const deleteMonitor = async (id: string) => {
     const response = await api.delete(`/monitors/${id}`);
     return response.data;
 };
+
+export const fetchMonitorData = async (id: string) => {
+    const response = await api.get(`/monitors/${id}`);
+    return response.data;
+};
