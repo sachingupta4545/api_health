@@ -1,15 +1,17 @@
+import { lazy } from "react";
 import { Route } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
-import Dashboard from "../pages/Dashboard";
-import MonitorPage from "../pages/monitor/MonitorPage";
-import MonitorCreatePage from "../pages/monitor/MonitorCreatePage";
-import IncidentsPage from "../pages/incidents/IncidentsPage";
-import IncidentDetailPage from "../pages/incidents/IncidentDetailPage";
-import AlertsPage from "../pages/alerts/AlertsPage";
-import AlertCreatePage from "../pages/alerts/AlertCreatePage";
-import StatusPage from "../pages/status/StatusPage";
-import SettingsPage from "../pages/settings/SettingsPage";
 import AuthMiddleware from "../middleware/AuthMiddleware";
+
+const Dashboard = lazy(() => import("../pages/Dashboard"));
+const MonitorPage = lazy(() => import("../pages/monitor/MonitorPage"));
+const MonitorCreatePage = lazy(() => import("../pages/monitor/MonitorCreatePage"));
+const IncidentsPage = lazy(() => import("../pages/incidents/IncidentsPage"));
+const IncidentDetailPage = lazy(() => import("../pages/incidents/IncidentDetailPage"));
+const AlertsPage = lazy(() => import("../pages/alerts/AlertsPage"));
+const AlertCreatePage = lazy(() => import("../pages/alerts/AlertCreatePage"));
+const StatusPage = lazy(() => import("../pages/status/StatusPage"));
+const SettingsPage = lazy(() => import("../pages/settings/SettingsPage"));
 
 export const appRoutes = (
     <Route element={<AuthMiddleware />}>

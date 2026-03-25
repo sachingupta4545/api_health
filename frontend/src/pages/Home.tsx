@@ -1,10 +1,15 @@
 import React from "react";
 import { ArrowRight, Activity, Zap, BarChart3, Bell, Globe, Plus, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 function Home() {
   return (
     <div className="flex flex-col gap-24 pb-20">
+      <Helmet>
+        <title>API Health Check - Monitor Your APIs in Real Time</title>
+        <meta name="description" content="Instant alerts, uptime tracking, and performance monitoring for all your APIs in one dashboard." />
+      </Helmet>
       {/* 1. Hero Section */}
       <section className="px-4  max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="max-w-2xl">

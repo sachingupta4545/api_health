@@ -3,6 +3,7 @@ import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/redux/Store';
 import { LoginAuth } from '@/redux/LoginSlice';
+import { Helmet } from "react-helmet-async";
 
 
 type FieldType = {
@@ -28,6 +29,10 @@ export default function Login() {
 
     return (
         <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 bg-gray-50/50">
+            <Helmet>
+                <title>Login - API Health Check</title>
+                <meta name="description" content="Log in to your API Health Check dashboard." />
+            </Helmet>
             <div className="max-w-md w-full space-y-8">
                 <div className="text-center">
                     <h2 className="text-3xl font-extrabold text-gray-900">Welcome back</h2>

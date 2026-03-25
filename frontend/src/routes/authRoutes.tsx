@@ -1,10 +1,12 @@
+import { lazy } from "react";
 import { Route, Navigate } from "react-router-dom";
-import Home from "../pages/Home";
-import Features from "../pages/Features";
-import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
 import HomeLayout from "../layouts/HomeLayout";
 import GuestMiddleware from "../middleware/GuestMiddleware";
+
+const Home = lazy(() => import("../pages/Home"));
+const Features = lazy(() => import("../pages/Features"));
+const Login = lazy(() => import("../pages/auth/Login"));
+const Signup = lazy(() => import("../pages/auth/Signup"));
 
 export const authRoutes = (
     <Route path="/" element={<HomeLayout />}>

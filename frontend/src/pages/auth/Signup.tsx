@@ -3,6 +3,7 @@ import { Mail, User, Lock, ArrowRight } from 'lucide-react';
 import { Button, Form, Input } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/redux/Store';
 import { RegisterAuth } from '@/redux/RegisterSlice';
+import { Helmet } from "react-helmet-async";
 
 
 type FieldType = {
@@ -29,6 +30,10 @@ export default function Signup() {
 
     return (
         <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 bg-gray-50/50">
+            <Helmet>
+                <title>Sign Up - API Health Check</title>
+                <meta name="description" content="Create a new account to start monitoring your APIs in real time." />
+            </Helmet>
             <div className="max-w-md w-full space-y-8">
                 <div className="text-center">
                     <h2 className="text-3xl font-extrabold text-gray-900">Welcome to Signup</h2>
@@ -125,9 +130,9 @@ export default function Signup() {
 
 
                         <p className="mt-4 text-center text-sm text-gray-600 already-account" >
-                            Don't have an account?{' '}
-                            <Link to="/signup" className="font-semibold text-sky-600 hover:text-sky-500 transition-colors">
-                                Sign up
+                            Already have an account?{' '}
+                            <Link to="/login" className="font-semibold text-sky-600 hover:text-sky-500 transition-colors">
+                                Log in
                             </Link>
                         </p>
                     </Form>
