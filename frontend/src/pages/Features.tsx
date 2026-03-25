@@ -1,10 +1,16 @@
 import React from 'react';
 import { Activity, Bell, BarChart3, Globe, Shield, Zap, ArrowRight, MessageSquare, Mail, Terminal } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 export default function Features() {
     return (
+        
         <div className="flex flex-col gap-24 pb-20">
+            <Helmet>
+                <title>{`Features - ${import.meta.env.VITE_APP_NAME || 'API Health Check'}`}</title>
+                <meta name="description" content="Instant alerts, uptime tracking, and performance monitoring for all your APIs in one dashboard." />
+            </Helmet>
             {/* Hero Section */}
             <section className="relative py-20 overflow-hidden">
                 <div className="absolute inset-0 bg-sky-50/50 -z-10" />
