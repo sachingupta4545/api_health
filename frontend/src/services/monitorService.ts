@@ -49,3 +49,8 @@ export const fetchMonitorData = async (id: string) => {
     const response = await api.get(`/monitors/${id}`);
     return response.data;
 };
+
+export const getDashboardMetrics = async () => {
+    const response = await api.get("/monitors/dashboard");
+    return response.data;
+};

@@ -9,6 +9,7 @@ import {
     deleteMonitor,
     getMonitorLogs,
     getMonitorStats,
+    getDashboardMetrics,
 } from "../controllers/monitorController.js";
 
 const router = Router();
@@ -18,6 +19,7 @@ router.use(auth);
 
 router.post("/", monitorRules, validate, createMonitor);             // POST   /api/monitors
 router.get("/", getMonitors);                                        // GET    /api/monitors
+router.get("/dashboard", getDashboardMetrics);                       // GET    /api/monitors/dashboard
 router.get("/:id", getMonitorById);                                  // GET    /api/monitors/:id
 router.put("/:id", monitorUpdateRules, validate, updateMonitor);     // PUT    /api/monitors/:id
 router.delete("/:id", deleteMonitor);                                // DELETE /api/monitors/:id
