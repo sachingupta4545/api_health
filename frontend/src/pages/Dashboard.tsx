@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Monitor, 
-    ArrowUpRight, 
-    ArrowDownRight, 
-    Clock, 
+import {
+    Monitor,
+    ArrowUpRight,
+    ArrowDownRight,
+    Clock,
     Activity,
     AlertCircle,
     CheckCircle2,
     Calendar
 } from 'lucide-react';
-import { 
-    AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, 
-    LineChart, Line, CartesianGrid 
+import {
+    AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
+    LineChart, Line, CartesianGrid
 } from 'recharts';
+import { Spin } from 'antd';
 import { getDashboardMetrics } from '../services/monitorService';
 
 interface DashboardStats {
@@ -29,7 +30,7 @@ export default function Dashboard() {
         downMonitors: 0,
         avgResponseTime: 0
     });
-    
+
     const [uptimeData, setUptimeData] = useState<any[]>([]);
     const [responseTimeData, setResponseTimeData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,7 +62,7 @@ export default function Dashboard() {
     if (loading) {
         return (
             <div className="flex h-[calc(100vh-200px)] w-full items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-sky-500 border-t-transparent"></div>
+                <Spin size="large" />
             </div>
         );
     }
@@ -94,10 +95,9 @@ export default function Dashboard() {
                         </div>
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>
                         <h3 className="text-2xl font-extrabold text-gray-900 mb-2">{stat.value}</h3>
-                        <p className={`text-[11px] font-bold ${
-                            stat.color === 'rose' && stats.downMonitors > 0 ? 'text-rose-500' : 
+                        <p className={`text-[11px] font-bold ${stat.color === 'rose' && stats.downMonitors > 0 ? 'text-rose-500' :
                             stat.color === 'emerald' ? 'text-emerald-500' : 'text-sky-500'
-                        }`}>
+                            }`}>
                             {stat.change}
                         </p>
                     </div>
@@ -115,14 +115,14 @@ export default function Dashboard() {
                             LIVE
                         </div>
                     </div>
-                    
+
                     <div className="h-64 w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={uptimeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorUptime" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
@@ -151,7 +151,7 @@ export default function Dashboard() {
                             </span>
                         </div>
                     </div>
-                    
+
                     <div className="h-64 w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={responseTimeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -173,7 +173,7 @@ export default function Dashboard() {
                 <div className="bg-rose-50 p-6 rounded-2xl border border-rose-100 shadow-sm min-h-[100px] flex items-center justify-between">
                     <div>
                         <h3 className="text-rose-600 font-bold mb-1 flex items-center gap-2">
-                            <AlertCircle className="w-5 h-5" /> 
+                            <AlertCircle className="w-5 h-5" />
                             Action Required
                         </h3>
                         <p className="text-sm text-rose-500 font-medium">You have {stats.downMonitors} API(s) currently experiencing an outage. Check the monitors tab for details.</p>

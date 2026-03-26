@@ -3,6 +3,8 @@ import { Bell, User, LayoutGrid, Search, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/Store';
 import { logout } from '@/redux/AuthSlice';
+import { Button, Popconfirm } from 'antd';
+
 
 export default function Navbar() {
     const dispatch = useAppDispatch();
@@ -21,14 +23,14 @@ export default function Navbar() {
                 <button className="lg:hidden p-2 hover:bg-gray-100 rounded-lg text-gray-400">
                     <LayoutGrid className="w-5 h-5" />
                 </button>
-                <div className="relative group hidden sm:block">
+                {/* <div className="relative group hidden sm:block">
                     <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-sky-500 transition-colors" />
                     <input
                         type="text"
                         placeholder="Search for monitor..."
                         className="bg-gray-50 border border-gray-100 rounded-lg pl-10 pr-4 py-2 text-sm w-64 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:bg-white transition-all"
                     />
-                </div>
+                </div> */}
             </div>
 
             {/* Right Section: Actions & Profile */}
@@ -40,7 +42,7 @@ export default function Navbar() {
 
                 <div className="h-8 w-px bg-gray-100 mx-2" />
 
-                <button className="flex items-center gap-3 p-1 rounded-xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 group">
+                <button onClick={() => navigate('/settings')} className="flex items-center gap-3 p-1 rounded-xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 group">
                     <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600">
                         <User className="w-5 h-5" />
                     </div>
@@ -56,13 +58,16 @@ export default function Navbar() {
                 </button>
 
                 {/* Logout Button */}
-                <button
-                    onClick={handleLogout}
+                <Popconfirm
                     title="Logout"
-                    className="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                    description="Are you sure to logout?"
+                    okText="Yes"
+                    cancelText="No"
+                    onConfirm={handleLogout}
+                    className="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
                 >
                     <LogOut className="w-5 h-5" />
-                </button>
+                </Popconfirm>
             </div>
         </header>
     );
