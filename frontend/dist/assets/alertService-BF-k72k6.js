@@ -1,0 +1,1 @@
+import{bb as s}from"./index-C1OFWd2R.js";const n=async()=>(await s.get("/alerts")).data,o=async e=>(await s.get(`/alerts/${e}`)).data,c=async e=>(await s.post("/alerts",e)).data,p=async(e,t)=>(await s.put(`/alerts/${e}`,t)).data,l=async e=>(await s.delete(`/alerts/${e}`)).data;export{o as a,c,l as d,n as g,p as u};
