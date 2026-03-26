@@ -177,37 +177,49 @@ export const getDashboardMetrics = async (req, res) => {
         const upMonitors = monitors.filter(m => m.lastStatus === "up").length;
         const downMonitors = monitors.filter(m => m.lastStatus === "down").length;
         
+        const monitorIds = monitors.map(m => m._id);
+
         const twentyFourHoursAgo = new Date();
         twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
-        
-        const logs = await MonitorLog.find({ 
-            monitorId: { $in: monitors.map(m => m._id) },
-            createdAt: { $gte: twentyFourHoursAgo }
-        }).sort({ createdAt: 1 });
-        
+
+        const hourlyAggregation = await MonitorLog.aggregate([
+            { 
+                $match: { 
+                    monitorId: { $in: monitorIds },
+                    createdAt: { $gte: twentyFourHoursAgo } 
+                } 
+            },
+            {
+                $group: {
+                    _id: { $hour: "$createdAt" },
+                    avgResponseTime: { $avg: "$responseTime" },
+                    responses: { $push: "$responseTime" }
+                }
+            },
+            { $sort: { "_id": 1 } }
+        ]);
+
         let avgResponseTime = 0;
-        if (logs.length > 0) {
-            avgResponseTime = Math.round(logs.reduce((sum, l) => sum + l.responseTime, 0) / logs.length);
+        if (hourlyAggregation.length > 0) {
+            avgResponseTime = Math.round(
+                hourlyAggregation.reduce((acc, curr) => acc + curr.avgResponseTime, 0) / hourlyAggregation.length
+            );
         }
 
         const responseTimeChartMap = new Map();
-        logs.forEach(log => {
-            const hour = new Date(log.createdAt).getHours();
+        hourlyAggregation.forEach(group => {
+            const hour = group._id;
             const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
-            if (!responseTimeChartMap.has(timeLabel)) {
-                responseTimeChartMap.set(timeLabel, { time: timeLabel, responses: [] });
-            }
-            responseTimeChartMap.get(timeLabel).responses.push(log.responseTime);
-        });
-
-        const responseTimeChart = Array.from(responseTimeChartMap.values()).map(entry => {
-            const sorted = entry.responses.sort((a, b) => a - b);
-            const avg = Math.round(sorted.reduce((a, b) => a + b, 0) / sorted.length);
+            
+            const sorted = group.responses.sort((a, b) => a - b);
+            const avg = Math.round(group.avgResponseTime);
             const p95 = sorted[Math.floor(sorted.length * 0.95)] || avg;
             const p99 = sorted[Math.floor(sorted.length * 0.99)] || p95;
-            return { time: entry.time, avg, p95, p99 };
+            
+            responseTimeChartMap.set(timeLabel, { time: timeLabel, avg, p95, p99 });
         });
 
+        const responseTimeChart = Array.from(responseTimeChartMap.values());
         if (responseTimeChart.length === 0) {
             const currentHour = new Date().getHours();
             responseTimeChart.push({ time: `${currentHour.toString().padStart(2, '0')}:00`, avg: 0, p95: 0, p99: 0 });
@@ -215,10 +227,26 @@ export const getDashboardMetrics = async (req, res) => {
 
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        const weeklyLogs = await MonitorLog.find({ 
-            monitorId: { $in: monitors.map(m => m._id) },
-            createdAt: { $gte: sevenDaysAgo }
-        });
+
+        const dailyAggregation = await MonitorLog.aggregate([
+            { 
+                $match: { 
+                    monitorId: { $in: monitorIds },
+                    createdAt: { $gte: sevenDaysAgo } 
+                } 
+            },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" },
+                        month: { $month: "$createdAt" },
+                        day: { $dayOfMonth: "$createdAt" }
+                    },
+                    total: { $sum: 1 },
+                    up: { $sum: { $cond: [{ $eq: ["$status", "up"] }, 1, 0] } }
+                }
+            }
+        ]);
 
         const uptimeChartMap = new Map();
         for (let i = 6; i >= 0; i--) {
@@ -228,12 +256,13 @@ export const getDashboardMetrics = async (req, res) => {
             uptimeChartMap.set(dateStr, { date: dateStr, total: 0, up: 0 });
         }
 
-        weeklyLogs.forEach(log => {
-            const dateStr = new Date(log.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        dailyAggregation.forEach(group => {
+            const d = new Date(group._id.year, group._id.month - 1, group._id.day);
+            const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             if (uptimeChartMap.has(dateStr)) {
                 const entry = uptimeChartMap.get(dateStr);
-                entry.total += 1;
-                if (log.status === 'up') entry.up += 1;
+                entry.total += group.total;
+                entry.up += group.up;
             }
         });
 
