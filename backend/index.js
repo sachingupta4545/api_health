@@ -46,7 +46,7 @@ app.use("/api/alerts", alertRoutes);
 app.use("/api/status", statusRoutes);
 
 // ─── Health Check ───────────────────────────────────
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
     res.json({ status: "OK", message: "API Health Check Server is running" });
 });
 
