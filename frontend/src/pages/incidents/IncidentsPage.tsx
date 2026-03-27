@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Table, Tag, Button, Select, DatePicker, Input, Space, Badge,
@@ -7,63 +7,13 @@ import {
 import { SearchOutlined, FilterOutlined, ReloadOutlined, EyeOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
+import { getIncidents, Incident } from '../../services/incidentService';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
 type Severity = 'critical' | 'high' | 'medium' | 'low';
 type IncidentStatus = 'open' | 'investigating' | 'resolved';
-
-interface Incident {
-    key: string;
-    id: string;
-    title: string;
-    monitor: string;
-    severity: Severity;
-    status: IncidentStatus;
-    startedAt: string;
-    resolvedAt: string | null;
-    duration: string;
-    affectedUrl: string;
-}
-
-const mockIncidents: Incident[] = [
-    {
-        key: '1', id: 'INC-001', title: 'Auth Service Unreachable', monitor: 'Auth Service',
-        severity: 'critical', status: 'resolved', startedAt: '2026-03-23 08:14:00',
-        resolvedAt: '2026-03-23 08:42:00', duration: '28m', affectedUrl: 'auth.guard.com',
-    },
-    {
-        key: '2', id: 'INC-002', title: 'Payment Gateway Timeout', monitor: 'Payment Gateway',
-        severity: 'high', status: 'investigating', startedAt: '2026-03-23 11:55:00',
-        resolvedAt: null, duration: '2h 14m', affectedUrl: 'stripe.external.api',
-    },
-    {
-        key: '3', id: 'INC-003', title: 'Search Engine Down', monitor: 'Search Engine',
-        severity: 'high', status: 'open', startedAt: '2026-03-23 13:30:00',
-        resolvedAt: null, duration: '45m', affectedUrl: 'search.pulse.local',
-    },
-    {
-        key: '4', id: 'INC-004', title: 'Admin API Slow Response', monitor: 'Admin API',
-        severity: 'medium', status: 'resolved', startedAt: '2026-03-22 19:00:00',
-        resolvedAt: '2026-03-22 19:35:00', duration: '35m', affectedUrl: 'api.admin.pulse',
-    },
-    {
-        key: '5', id: 'INC-005', title: 'Worker Node 1 Offline', monitor: 'Worker Node 1',
-        severity: 'critical', status: 'resolved', startedAt: '2026-03-22 03:10:00',
-        resolvedAt: '2026-03-22 04:05:00', duration: '55m', affectedUrl: 'node1.cluster.local',
-    },
-    {
-        key: '6', id: 'INC-006', title: 'Notification Hub Latency Spike', monitor: 'Notification Hub',
-        severity: 'low', status: 'resolved', startedAt: '2026-03-21 14:00:00',
-        resolvedAt: '2026-03-21 14:20:00', duration: '20m', affectedUrl: 'push.notify.com',
-    },
-    {
-        key: '7', id: 'INC-007', title: 'Database Connection Pool Exhausted', monitor: 'User Database',
-        severity: 'high', status: 'resolved', startedAt: '2026-03-20 09:45:00',
-        resolvedAt: '2026-03-20 10:30:00', duration: '45m', affectedUrl: 'db.internal.check',
-    },
-];
 
 const severityConfig: Record<Severity, { color: string; label: string }> = {
     critical: { color: 'red', label: 'Critical' },
@@ -80,24 +30,54 @@ const statusConfig: Record<IncidentStatus, { color: string; status: 'error' | 'w
 
 export default function IncidentsPage() {
     const navigate = useNavigate();
+    const [incidents, setIncidents] = useState<Incident[]>([]);
     const [search, setSearch] = useState('');
     const [severityFilter, setSeverityFilter] = useState<string>('all');
     const [statusFilter, setStatusFilter] = useState<string>('all');
-    const [error] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
-    const filtered = mockIncidents.filter((inc) => {
+    const fetchIncidents = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await getIncidents();
+            setIncidents(response.incidents);
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Failed to load incidents');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchIncidents();
+    }, []);
+
+    const filtered = incidents.filter((inc) => {
+        const monitorName = inc.monitorId?.name || '';
         const matchSearch =
             inc.title.toLowerCase().includes(search.toLowerCase()) ||
-            inc.monitor.toLowerCase().includes(search.toLowerCase()) ||
+            monitorName.toLowerCase().includes(search.toLowerCase()) ||
             inc.id.toLowerCase().includes(search.toLowerCase());
         const matchSeverity = severityFilter === 'all' || inc.severity === severityFilter;
         const matchStatus = statusFilter === 'all' || inc.status === statusFilter;
         return matchSearch && matchSeverity && matchStatus;
     });
 
-    const openCount = mockIncidents.filter((i) => i.status === 'open').length;
-    const investigatingCount = mockIncidents.filter((i) => i.status === 'investigating').length;
-    const resolvedCount = mockIncidents.filter((i) => i.status === 'resolved').length;
+    const openCount = incidents.filter((i) => i.status === 'open').length;
+    const investigatingCount = incidents.filter((i) => i.status === 'investigating').length;
+    const resolvedCount = incidents.filter((i) => i.status === 'resolved').length;
+
+    const calculateDuration = (startedAt: string, resolvedAt: string | null) => {
+        const start = dayjs(startedAt);
+        const end = resolvedAt ? dayjs(resolvedAt) : dayjs();
+        const diffMinutes = end.diff(start, 'minute');
+        if (diffMinutes < 60) return `${diffMinutes}m`;
+        const hours = Math.floor(diffMinutes / 60);
+        const mins = diffMinutes % 60;
+        return `${hours}h ${mins}m`;
+    };
 
     const columns: ColumnsType<Incident> = [
         {
@@ -120,17 +100,17 @@ export default function IncidentsPage() {
         },
         {
             title: 'Monitor',
-            dataIndex: 'monitor',
+            dataIndex: 'monitorId',
             key: 'monitor',
-            render: (monitor) => <Tag>{monitor}</Tag>,
+            render: (monitorId) => <Tag>{monitorId?.name || 'Unknown'}</Tag>,
         },
         {
             title: 'Severity',
             dataIndex: 'severity',
             key: 'severity',
             render: (s: Severity) => (
-                <Tag color={severityConfig[s].color} className="font-semibold uppercase text-xs">
-                    {severityConfig[s].label}
+                <Tag color={severityConfig[s]?.color || 'blue'} className="font-semibold uppercase text-xs">
+                    {severityConfig[s]?.label || s}
                 </Tag>
             ),
             filters: [
@@ -147,8 +127,8 @@ export default function IncidentsPage() {
             key: 'status',
             render: (s: IncidentStatus) => (
                 <Badge
-                    status={statusConfig[s].status}
-                    text={<span className="font-medium">{statusConfig[s].label}</span>}
+                    status={statusConfig[s]?.status || 'default'}
+                    text={<span className="font-medium">{statusConfig[s]?.label || s}</span>}
                 />
             ),
             filters: [
@@ -162,14 +142,17 @@ export default function IncidentsPage() {
             title: 'Started At',
             dataIndex: 'startedAt',
             key: 'startedAt',
-            render: (v) => <Text className="text-xs">{v}</Text>,
+            render: (v) => <Text className="text-xs">{dayjs(v).format('YYYY-MM-DD HH:mm')}</Text>,
             sorter: (a, b) => dayjs(a.startedAt).unix() - dayjs(b.startedAt).unix(),
         },
         {
             title: 'Duration',
-            dataIndex: 'duration',
             key: 'duration',
-            render: (v) => <Text className="font-mono text-xs">{v}</Text>,
+            render: (_, record) => (
+                <Text className="font-mono text-xs">
+                    {calculateDuration(record.startedAt, record.resolvedAt)}
+                </Text>
+            ),
         },
         {
             title: 'Action',
@@ -180,7 +163,7 @@ export default function IncidentsPage() {
                     <Button
                         type="link"
                         icon={<EyeOutlined />}
-                        onClick={() => navigate(`/incidents/${record.key}`)}
+                        onClick={() => navigate(`/incidents/${record._id}`)}
                     />
                 </Tooltip>
             ),
@@ -195,7 +178,7 @@ export default function IncidentsPage() {
                     <Title level={3} className="!mb-0">Incidents</Title>
                     <Text type="secondary">Track and manage service disruptions</Text>
                 </div>
-                <Button icon={<ReloadOutlined />}>Refresh</Button>
+                <Button icon={<ReloadOutlined />} onClick={fetchIncidents} loading={loading}>Refresh</Button>
             </div>
 
             {/* Error Banner */}
@@ -264,7 +247,8 @@ export default function IncidentsPage() {
                 <Table
                     columns={columns}
                     dataSource={filtered}
-                    rowKey="key"
+                    rowKey="_id"
+                    loading={loading}
                     locale={{
                         emptyText: (
                             <Empty

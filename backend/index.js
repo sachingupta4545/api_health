@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import monitorRoutes from "./routes/monitorRoutes.js";
 import alertRoutes from "./routes/alertRoutes.js";
 import statusRoutes from "./routes/statusRoutes.js";
+import incidentRoutes from "./routes/incidentRoutes.js";
 import { startAllJobs } from "./jobs/index.js";
 import { createBullBoard } from "@bull-board/api";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
@@ -18,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 
 // ─── Middlewares ───────────────────────────────────
 app.use(cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://127.0.0.1:5173",
     credentials: true,
 }));
 app.use(express.json());
@@ -44,6 +45,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/monitors", monitorRoutes);
 app.use("/api/alerts", alertRoutes);
 app.use("/api/status", statusRoutes);
+app.use("/api/incidents", incidentRoutes);
 
 // ─── Health Check ───────────────────────────────────
 app.get("/api", (req, res) => {
