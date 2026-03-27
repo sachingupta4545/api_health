@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import monitorRoutes from "./routes/monitorRoutes.js";
 import alertRoutes from "./routes/alertRoutes.js";
 import statusRoutes from "./routes/statusRoutes.js";
+import incidentRoutes from "./routes/incidentRoutes.js";
 import { startAllJobs } from "./jobs/index.js";
 import { createBullBoard } from "@bull-board/api";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
@@ -44,6 +45,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/monitors", monitorRoutes);
 app.use("/api/alerts", alertRoutes);
 app.use("/api/status", statusRoutes);
+app.use("/api/incidents", incidentRoutes);
 
 // ─── Health Check ───────────────────────────────────
 app.get("/api", (req, res) => {
