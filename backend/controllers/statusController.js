@@ -29,6 +29,7 @@ export const getStatusPageData = async (req, res) => {
                 uptime: uptimePercent,
                 responseTime: avgResponseTime,
                 description: monitor.url, // using URL as description for now
+                createdAt: monitor.createdAt,
             };
         }));
         

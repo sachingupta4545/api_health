@@ -6,6 +6,7 @@ export interface Service {
     uptime: string;
     responseTime: string;
     description: string;
+    createdAt?: string;
 }
 
 export interface StatusGroup {

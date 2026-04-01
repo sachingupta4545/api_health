@@ -5,6 +5,7 @@ import {
     InfoCircleOutlined,
 } from '@ant-design/icons';
 import { getStatusData, StatusPageData, StatusGroup, Service } from '../../services/statusService';
+import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
@@ -32,8 +33,17 @@ const statusConfig: Record<ServiceStatus, {
     },
 };
 
-const UptimeBar = ({ uptime }: { uptime: string }) => {
+const UptimeBar = ({ uptime, createdAt }: { uptime: string; createdAt?: string }) => {
+    // Calculate active days since creation (max 90, min 1)
+    const activeDaysCount = Math.min(
+        Math.max(createdAt ? dayjs().diff(dayjs(createdAt), 'day') + 1 : 90, 1),
+        90
+    );
+    const emptyDaysCount = 90 - activeDaysCount;
+
     const days = Array.from({ length: 90 }, (_, i) => {
+        if (i < emptyDaysCount) return 'empty'; // Un-monitored days
+
         const pct = parseFloat(uptime) || 100;
         const rand = Math.random();
         if (pct > 99.9) return rand < 0.98 ? 'operational' : 'degraded';
@@ -42,11 +52,11 @@ const UptimeBar = ({ uptime }: { uptime: string }) => {
     });
 
     const colorMap: Record<string, string> = {
-        operational: 'bg-emerald-400', degraded: 'bg-amber-400', outage: 'bg-red-400',
+        operational: 'bg-emerald-400', degraded: 'bg-amber-400', outage: 'bg-red-400', empty: 'bg-gray-100',
     };
 
     return (
-        <Tooltip title={`${uptime} uptime over last 100 checks`}>
+        <Tooltip title={createdAt ? `History since ${dayjs(createdAt).format('MMM D, YYYY')}` : `${uptime} uptime over last 100 checks`}>
             <div className="flex gap-px h-6 cursor-default">
                 {days.map((status, i) => (
                     <div key={i} className={`flex-1 rounded-sm ${colorMap[status]}`} />
@@ -173,7 +183,7 @@ export default function StatusPage() {
                                                     </Tag>
                                                 </div>
                                             </div>
-                                            {svc.uptime !== '—' && <UptimeBar uptime={svc.uptime} />}
+                                            {svc.uptime !== '—' && <UptimeBar uptime={svc.uptime} createdAt={svc.createdAt} />}
                                             <div className="flex justify-between mt-1">
                                                 <Text type="secondary" className="text-[10px]">90 days ago</Text>
                                                 <Text type="secondary" className="text-[10px]">Today</Text>
