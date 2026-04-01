@@ -39,7 +39,7 @@ export const getIncidentById = async (req, res) => {
 // @access  Private
 export const createIncident = async (req, res) => {
     try {
-        const { title, monitorId, severity, status, affectedUrl, startedAt } = req.body;
+        const { title, monitorId, severity, status, affectedUrl, startedAt, description, affectedServices, timeline } = req.body;
 
         // generate a unique ID, e.g., INC-timestamp
         const id = `INC-${Date.now()}`;
@@ -52,6 +52,9 @@ export const createIncident = async (req, res) => {
             status,
             affectedUrl,
             startedAt: startedAt || Date.now(),
+            description: description || '',
+            affectedServices: affectedServices || [],
+            timeline: timeline || [],
             owner: req.user._id,
         });
 
@@ -67,7 +70,7 @@ export const createIncident = async (req, res) => {
 // @access  Private
 export const updateIncident = async (req, res) => {
     try {
-        const { title, severity, status, resolvedAt } = req.body;
+        const { title, severity, status, resolvedAt, description, affectedServices, timeline } = req.body;
 
         // if resolved, set resolvedAt if not provided
         let finalResolvedAt = resolvedAt;
@@ -77,9 +80,14 @@ export const updateIncident = async (req, res) => {
             finalResolvedAt = null;
         }
 
+        const updateFields = { title, severity, status, resolvedAt: finalResolvedAt };
+        if (description !== undefined) updateFields.description = description;
+        if (affectedServices !== undefined) updateFields.affectedServices = affectedServices;
+        if (timeline !== undefined) updateFields.timeline = timeline;
+
         const incident = await Incident.findOneAndUpdate(
             { _id: req.params.id, owner: req.user._id },
-            { title, severity, status, resolvedAt: finalResolvedAt },
+            updateFields,
             { new: true, runValidators: true }
         ).populate("monitorId", "name url");
 

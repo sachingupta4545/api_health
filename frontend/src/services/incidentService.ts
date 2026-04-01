@@ -1,6 +1,14 @@
 import api from "./api";
 import { Monitor } from "./monitorService";
 
+export interface TimelineEvent {
+    _id?: string;
+    time: string;
+    type: 'error' | 'warning' | 'info' | 'success';
+    label: string;
+    body: string;
+}
+
 export interface Incident {
     _id: string;
     id: string;
@@ -11,6 +19,9 @@ export interface Incident {
     startedAt: string;
     resolvedAt: string | null;
     affectedUrl: string;
+    description?: string;
+    affectedServices?: string[];
+    timeline?: TimelineEvent[];
     createdAt?: string;
     updatedAt?: string;
 }

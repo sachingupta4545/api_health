@@ -39,6 +39,26 @@ const incidentSchema = new mongoose.Schema(
             type: String,
             trim: true,
         },
+        description: {
+            type: String,
+            trim: true,
+            default: '',
+        },
+        affectedServices: {
+            type: [String],
+            default: [],
+        },
+        timeline: {
+            type: [
+                {
+                    time: { type: String },
+                    type: { type: String, enum: ['error', 'warning', 'info', 'success'], default: 'info' },
+                    label: { type: String },
+                    body: { type: String },
+                },
+            ],
+            default: [],
+        },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
