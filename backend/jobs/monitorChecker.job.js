@@ -12,6 +12,7 @@ export const startMonitorChecker = () => {
             return;
         }
 
+        
         isRunning = true;
         try {
             const now = Date.now();
