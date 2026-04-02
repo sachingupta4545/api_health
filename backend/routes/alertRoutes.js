@@ -13,13 +13,8 @@ const router = express.Router();
 // Apply protection to all routes
 router.use(protect);
 
-router.route("/")
-    .post(createAlert)
-    .get(getAlerts);
+router.route("/").post(createAlert).get(getAlerts);
 
-router.route("/:id")
-    .get(getAlertById)
-    .put(updateAlert)
-    .delete(deleteAlert);
+router.route("/:id").get(getAlertById).put(updateAlert).delete(deleteAlert);
 
 export default router;
