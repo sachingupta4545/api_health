@@ -17,13 +17,13 @@ const router = Router();
 // All monitor routes are protected — must be logged in
 router.use(auth);
 
-router.post("/", monitorRules, validate, createMonitor);             // POST   /api/monitors
-router.get("/", getMonitors);                                        // GET    /api/monitors
-router.get("/dashboard", getDashboardMetrics);                       // GET    /api/monitors/dashboard
-router.get("/:id", getMonitorById);                                  // GET    /api/monitors/:id
-router.put("/:id", monitorUpdateRules, validate, updateMonitor);     // PUT    /api/monitors/:id
-router.delete("/:id", deleteMonitor);                                // DELETE /api/monitors/:id
-router.get("/:id/logs", getMonitorLogs);                             // GET    /api/monitors/:id/logs
-router.get("/:id/stats", getMonitorStats);                           // GET    /api/monitors/:id/stats
+router.post("/", monitorRules, validate, createMonitor);
+router.get("/", getMonitors);
+router.get("/dashboard", getDashboardMetrics);
+router.get("/:id", getMonitorById);
+router.put("/:id", monitorUpdateRules, validate, updateMonitor);
+router.delete("/:id", deleteMonitor);
+router.get("/:id/logs", getMonitorLogs);
+router.get("/:id/stats", getMonitorStats);
 
 export default router;
