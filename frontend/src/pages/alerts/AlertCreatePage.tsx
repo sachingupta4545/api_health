@@ -217,6 +217,7 @@ export default function AlertCreatePage() {
                             rules={[
                                 { required: true, message: 'Please enter at least one email address' },
                                 {
+                                    
                                     validator(_, value) {
                                         if (!value) return Promise.resolve();
                                         const emails = value.split(',').map((e: string) => e.trim()).filter(Boolean);
