@@ -67,8 +67,8 @@ export default function AlertCreatePage() {
             const payload = {
                 ...values,
                 // Combine threshold fields into one based on condition
-                threshold: values.condition === 'slow' ? values.threshold : 
-                           values.condition === 'ssl_expiry' ? values.ssl_days : 0,
+                threshold: values.condition === 'slow' ? values.threshold :
+                    values.condition === 'ssl_expiry' ? values.ssl_days : 0,
                 emails: values.emails.split(',').map((e: string) => e.trim()).filter(Boolean),
             };
 
@@ -228,6 +228,7 @@ export default function AlertCreatePage() {
                                     },
                                 },
                             ]}
+
                             extra="Separate multiple email addresses with commas"
                         >
                             <Input
