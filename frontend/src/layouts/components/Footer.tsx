@@ -17,7 +17,7 @@ export default function Footer() {
                             Reliable API health monitoring for modern teams.
                         </p>
                         <div className="flex items-center space-x-4">
-                           
+
                         </div>
                     </div>
 

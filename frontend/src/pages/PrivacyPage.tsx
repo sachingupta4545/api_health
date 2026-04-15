@@ -122,11 +122,11 @@ export default function PrivacyPage() {
                         We're happy to help. Reach out to our privacy team directly.
                     </p>
                     <a
-                        href="mailto:privacy@apipulse.dev"
+                        href="mailto:sgsolutions2802@gmail.com"
                         className="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-lg text-sm font-bold transition-all"
                     >
                         <Mail className="w-4 h-4" />
-                        sgsolutions@gmail.com
+                        sgsolutions2802@gmail.com
                     </a>
                 </div>
             </section>
