@@ -9,15 +9,18 @@ import {
     Settings,
     ChevronLeft,
     ChevronRight,
-    Activity
+    Activity,
+    X
 } from 'lucide-react';
 
 interface SidebarProps {
     isCollapsed: boolean;
     toggleSidebar: () => void;
+    isMobileOpen: boolean;
+    closeMobileSidebar: () => void;
 }
 
-export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
+export default function Sidebar({ isCollapsed, toggleSidebar, isMobileOpen, closeMobileSidebar }: SidebarProps) {
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
         { icon: Monitor, label: 'Monitors', path: '/monitors' },
@@ -27,14 +30,15 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
         { icon: Settings, label: 'Settings', path: '/settings' },
     ];
 
-    return (
+    const sidebarContent = (
         <aside
-            className={`bg-[#0F172A] text-slate-300 transition-all duration-300 flex flex-col h-screen sticky top-0 ${isCollapsed ? 'w-20' : 'w-64'
-                }`}
+            className={`bg-[#0F172A] text-slate-300 transition-all duration-300 flex flex-col h-full
+                ${isCollapsed ? 'w-20' : 'w-64'}
+            `}
         >
             {/* Logo Section */}
-            <div className="h-16 flex items-center px-6 border-b border-slate-800/50 overflow-hidden shrink-0">
-                <div className="flex items-center gap-3">
+            <div className="h-16 flex items-center px-4 border-b border-slate-800/50 overflow-hidden shrink-0">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                     <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center shrink-0">
                         <Activity className="w-5 h-5 text-white" />
                     </div>
@@ -42,6 +46,14 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
                         <span className="font-bold text-lg text-white tracking-tight truncate">PulseGuard</span>
                     )}
                 </div>
+                {/* Close button for mobile */}
+                <button
+                    onClick={closeMobileSidebar}
+                    className="lg:hidden ml-2 p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors shrink-0"
+                    aria-label="Close sidebar"
+                >
+                    <X className="w-4 h-4" />
+                </button>
             </div>
 
             {/* Navigation Section */}
@@ -50,6 +62,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
                     <NavLink
                         key={item.path}
                         to={item.path}
+                        onClick={closeMobileSidebar}
                         className={({ isActive }) => `
                             flex items-center gap-4 px-3 py-2.5 rounded-xl transition-all group
                             ${isActive
@@ -64,8 +77,8 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
                 ))}
             </nav>
 
-            {/* Bottom Section / Collapse Toggle */}
-            <div className="p-4 border-t border-slate-800/50 shrink-0">
+            {/* Bottom Section / Collapse Toggle — hidden on mobile */}
+            <div className="p-4 border-t border-slate-800/50 shrink-0 hidden lg:block">
                 <button
                     onClick={toggleSidebar}
                     className="w-full flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-slate-800/50 transition-colors text-slate-400 hover:text-white"
@@ -79,5 +92,32 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
                 </button>
             </div>
         </aside>
+    );
+
+    return (
+        <>
+            {/* Desktop Sidebar — sticky, always visible */}
+            <div className="hidden lg:flex h-screen sticky top-0 shrink-0">
+                {sidebarContent}
+            </div>
+
+            {/* Mobile Overlay */}
+            {isMobileOpen && (
+                <div
+                    className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+                    onClick={closeMobileSidebar}
+                    aria-hidden="true"
+                />
+            )}
+
+            {/* Mobile Drawer */}
+            <div
+                className={`lg:hidden fixed inset-y-0 left-0 z-50 h-full transform transition-transform duration-300 ease-in-out
+                    ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
+                `}
+            >
+                {sidebarContent}
+            </div>
+        </>
     );
 }

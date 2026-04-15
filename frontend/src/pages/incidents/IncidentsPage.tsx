@@ -187,7 +187,7 @@ export default function IncidentsPage() {
             )}
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                     { label: 'Open', count: openCount, color: 'bg-red-50 border-red-200 text-red-600' },
                     { label: 'Investigating', count: investigatingCount, color: 'bg-orange-50 border-orange-200 text-orange-600' },
@@ -249,6 +249,7 @@ export default function IncidentsPage() {
                     dataSource={filtered}
                     rowKey="_id"
                     loading={loading}
+                    scroll={{ x: 700 }}
                     locale={{
                         emptyText: (
                             <Empty

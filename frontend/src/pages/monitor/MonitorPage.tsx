@@ -67,10 +67,11 @@ export default function MonitorPage() {
                     <Plus size={18} /> Add Monitor
                 </Button>
             </div>
-            <Table<Monitor> 
-                dataSource={monitors} 
+            <Table<Monitor>
+                dataSource={monitors}
                 rowKey="_id"
                 loading={loading}
+                scroll={{ x: 700 }}
                 style={{ border: '1px solid #e5e7eb', borderRadius: '10px' }}
                 pagination={{
                     pageSize: 7,

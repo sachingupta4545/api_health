@@ -103,7 +103,7 @@ export default function MonitorCreatePage() {
 
             <Card
                 className="shadow-sm border-gray-100 rounded-2xl"
-                bodyStyle={{ padding: '32px' }}
+                bodyStyle={{ padding: '24px' }}
             >
                 {fetchingMonitor ? (
                     <div className="flex justify-center items-center py-16">
@@ -154,8 +154,8 @@ export default function MonitorCreatePage() {
                                 />
                             </Form.Item>
 
-                            <Row gutter={24}>
-                                <Col span={12}>
+                            <Row gutter={[24, 0]}>
+                                <Col xs={24} sm={12}>
                                     <Form.Item
                                         label={<span className="font-bold text-gray-600">HTTP Method</span>}
                                         name="method"
@@ -172,7 +172,7 @@ export default function MonitorCreatePage() {
                                         />
                                     </Form.Item>
                                 </Col>
-                                <Col span={12}>
+                                <Col xs={24} sm={12}>
                                     <Form.Item
                                         label={<span className="font-bold text-gray-600">Check Interval</span>}
                                         name="interval"
@@ -191,8 +191,8 @@ export default function MonitorCreatePage() {
                                 </Col>
                             </Row>
 
-                            <Row gutter={24}>
-                                <Col span={12}>
+                            <Row gutter={[24, 0]}>
+                                <Col xs={24} sm={12}>
                                     <Form.Item
                                         label={<span className="font-bold text-gray-600">Timeout (seconds)</span>}
                                         name="timeout"
@@ -204,7 +204,7 @@ export default function MonitorCreatePage() {
                                         />
                                     </Form.Item>
                                 </Col>
-                                <Col span={12}>
+                                <Col xs={24} sm={12}>
                                     <Form.Item
                                         label={<span className="font-bold text-gray-600">Alert Contacts</span>}
                                         name="alerts"

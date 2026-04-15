@@ -5,19 +5,19 @@ import { Helmet } from "react-helmet-async";
 
 function Home() {
   return (
-    <div className="flex flex-col gap-24 pb-20">
+    <div className="flex flex-col gap-16 sm:gap-24 pb-20 pt-6 sm:pt-0">
       <Helmet>
         <title>API Health Check - Monitor Your APIs in Real Time</title>
         <meta name="description" content="Instant alerts, uptime tracking, and performance monitoring for all your APIs in one dashboard." />
       </Helmet>
       {/* 1. Hero Section */}
-      <section className="px-4  max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="px-4 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full mb-6">
             <Zap className="w-3.5 h-3.5 text-gray-900" />
             <span className="text-xs font-medium text-gray-900">Real-time API monitoring</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-extrabold text-[#0F172A] leading-tight mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#0F172A] leading-tight mb-6">
             Monitor Your APIs <br />
             <span className="text-sky-500">in Real Time</span>
           </h1>
@@ -139,7 +139,7 @@ function Home() {
               See every endpoint at a glance — status, response time, and uptime all in one place.
             </p>
           </div>
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 max-w-5xl mx-auto overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-8 max-w-5xl mx-auto overflow-x-auto">
             <div className="flex items-center justify-between mb-8 border-b border-gray-50 pb-6">
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 border-[1.5px] border-sky-500 rounded flex items-center justify-center">
@@ -167,7 +167,7 @@ function Home() {
                 { name: "Orders API", uptime: "99.99%", time: "89ms", status: "UP" },
                 { name: "Notifications API", uptime: "99.90%", time: "55ms", status: "UP" },
               ].map((api, i) => (
-                <div key={i} className="flex items-center justify-between p-4 bg-gray-50/30 rounded-xl hover:bg-gray-50 transition-colors">
+                <div key={i} className="flex items-center justify-between p-3 sm:p-4 bg-gray-50/30 rounded-xl hover:bg-gray-50 transition-colors min-w-[480px]">
                   <div className="flex items-center gap-4">
                     <div className={`w-2 h-2 rounded-full ${api.status === "UP" ? "bg-emerald-500" : "bg-rose-500"}`} />
                     <span className="text-sm font-semibold text-gray-800">{api.name}</span>
@@ -189,8 +189,8 @@ function Home() {
       </section>
 
       {/* 5. Final CTA Section */}
-      <section className="px-4  text-center">
-        <h2 className="text-4xl font-bold text-gray-900 mb-6">Start Monitoring Your APIs Today</h2>
+      <section className="px-4 sm:px-6 text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">Start Monitoring Your APIs Today</h2>
         <p className="text-gray-500 mb-10 max-w-sm mx-auto leading-relaxed">
           Free to get started. No credit card required. Set up your first monitor in under a minute.
         </p>

@@ -190,7 +190,7 @@ export default function AlertsPage() {
             )}
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                     { label: 'Total Rules', count: alerts.length, color: 'bg-sky-50 border-sky-200 text-sky-600' },
                     { label: 'Active Rules', count: enabledCount, color: 'bg-emerald-50 border-emerald-200 text-emerald-600' },
@@ -213,6 +213,7 @@ export default function AlertsPage() {
                         columns={columns}
                         dataSource={alerts}
                         rowKey="_id"
+                        scroll={{ x: 600 }}
                         locale={{
                             emptyText: (
                                 <Empty

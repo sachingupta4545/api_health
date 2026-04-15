@@ -107,7 +107,7 @@ export default function Dashboard() {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Uptime Percentage Chart */}
-                <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="bg-white p-4 sm:p-8 rounded-2xl border border-gray-100 shadow-sm">
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="font-extrabold text-gray-900 tracking-tight">Uptime Percentage (7 Days)</h3>
                         <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded">
@@ -136,10 +136,10 @@ export default function Dashboard() {
                 </div>
 
                 {/* Response Time Trends Chart */}
-                <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                    <div className="flex items-center justify-between mb-8">
+                <div className="bg-white p-4 sm:p-8 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="flex items-start justify-between mb-8 flex-wrap gap-2">
                         <h3 className="font-extrabold text-gray-900 tracking-tight">Response Time (24h)</h3>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                             <span className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 uppercase tracking-widest px-2 py-1 bg-gray-50 rounded">
                                 <div className="w-1.5 h-1.5 rounded-full bg-rose-500" /> P99
                             </span>
@@ -170,7 +170,7 @@ export default function Dashboard() {
 
             {/* Bottom Section Placeholder */}
             {stats.downMonitors > 0 && (
-                <div className="bg-rose-50 p-6 rounded-2xl border border-rose-100 shadow-sm min-h-[100px] flex items-center justify-between">
+                <div className="bg-rose-50 p-4 sm:p-6 rounded-2xl border border-rose-100 shadow-sm min-h-[100px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h3 className="text-rose-600 font-bold mb-1 flex items-center gap-2">
                             <AlertCircle className="w-5 h-5" />
@@ -178,7 +178,7 @@ export default function Dashboard() {
                         </h3>
                         <p className="text-sm text-rose-500 font-medium">You have {stats.downMonitors} API(s) currently experiencing an outage. Check the monitors tab for details.</p>
                     </div>
-                    <a href="/monitors" className="px-4 py-2 bg-rose-600 text-white font-bold rounded-lg text-sm hover:bg-rose-700 transition">View Incidents</a>
+                    <a href="/monitors" className="shrink-0 px-4 py-2 bg-rose-600 text-white font-bold rounded-lg text-sm hover:bg-rose-700 transition">View Incidents</a>
                 </div>
             )}
         </div>
