@@ -5,6 +5,8 @@ import GuestMiddleware from "../middleware/GuestMiddleware";
 
 const Home = lazy(() => import("../pages/Home"));
 const Features = lazy(() => import("../pages/Features"));
+const AboutPage = lazy(() => import("../pages/AboutPage"));
+const PrivacyPage = lazy(() => import("../pages/PrivacyPage"));
 const Login = lazy(() => import("../pages/auth/Login"));
 const Signup = lazy(() => import("../pages/auth/Signup"));
 
@@ -12,6 +14,8 @@ export const authRoutes = (
     <Route path="/" element={<HomeLayout />}>
         <Route index element={<Home />} />
         <Route path="features" element={<Features />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="privacy" element={<PrivacyPage />} />
 
         {/* Only accessible when NOT logged in */}
         <Route element={<GuestMiddleware />}>

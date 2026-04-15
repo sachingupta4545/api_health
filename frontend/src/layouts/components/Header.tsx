@@ -22,8 +22,7 @@ export default function Header() {
                     {/* Navigation Middle Section — desktop only */}
                     <nav className="hidden md:flex items-center space-x-10">
                         <Link to="/features" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Features</Link>
-                        <Link to="#pricing" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Pricing</Link>
-                        <Link to="#docs" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Docs</Link>
+                        <Link to="/about" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">About</Link>
                     </nav>
 
                     {/* Right Action Section — desktop */}
@@ -60,18 +59,11 @@ export default function Header() {
                         Features
                     </Link>
                     <Link
-                        to="#pricing"
+                        to="/about"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="block text-sm font-medium text-gray-600 hover:text-gray-900 py-2"
                     >
-                        Pricing
-                    </Link>
-                    <Link
-                        to="#docs"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block text-sm font-medium text-gray-600 hover:text-gray-900 py-2"
-                    >
-                        Docs
+                        About
                     </Link>
                     <div className="pt-2 border-t border-gray-100 flex flex-col gap-3">
                         <Link
