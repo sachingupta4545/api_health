@@ -41,14 +41,10 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Section */}
-                <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="pt-8 border-t border-gray-100 flex justify-center items-center">
                     <p className="text-xs text-gray-400 text-center">
                         © {new Date().getFullYear()} API Pulse. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-6">
-                        <Link to="/privacy" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Privacy Policy</Link>
-                        <Link to="/about" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">About</Link>
-                    </div>
                 </div>
             </div>
         </footer>
