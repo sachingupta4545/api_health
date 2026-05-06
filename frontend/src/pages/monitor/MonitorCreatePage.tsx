@@ -95,6 +95,7 @@ export default function MonitorCreatePage() {
         }
     };
 
+    
     return (
         <div className="max-w-4xl mx-auto py-8 px-4">
             <Title level={2} className="!mb-8 !text-[#0F172A] !font-extrabold tracking-tight">
