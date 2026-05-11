@@ -95,7 +95,7 @@ export default function MonitorCreatePage() {
         }
     };
 
-    
+
 
 
 
@@ -124,6 +124,8 @@ export default function MonitorCreatePage() {
 
                         <Form
                             form={form}
+
+                            
                             layout="vertical"
                             onFinish={onFinish}
                             requiredMark={true}
