@@ -99,7 +99,7 @@ export default function AlertsPage() {
                 </div>
             ),
         },
-        
+
         {
             title: 'Channel',
             dataIndex: 'emails',
